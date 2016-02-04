@@ -7,7 +7,7 @@ var ws = require('socket.io')(server);
 
 var routes = require('./routes');
 app.use(routes);
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/')));
 
 app.set('port', process.env.PORT || 3000);
 
