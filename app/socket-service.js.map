@@ -1,1 +1,1 @@
-{"version":3,"file":"socket-service.js","sourceRoot":"","sources":["socket-service.ts"],"names":[],"mappings":""}
+{"version":3,"file":"socket-service.js","sourceRoot":"","sources":["socket-service.ts"],"names":["SocketService","SocketService.constructor"],"mappings":";;;;;;;;;;;;;;;;;;YAEA;gBAIIA;oBACIC,IAAIA,CAACA,MAAMA,GAAGA,EAAEA,CAACA,OAAOA,EAAEA,CAACA;gBAC/BA,CAACA;gBANLD;oBAACA,iBAAUA,EAAEA;;kCAOZA;gBAADA,oBAACA;YAADA,CAACA,AAPD,IAOC;YAPD,yCAOC,CAAA"}

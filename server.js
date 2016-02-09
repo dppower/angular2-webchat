@@ -19,5 +19,8 @@ ws.on('connection', function (socket) {
     console.log('A user has connected');
     socket.on('disconnect', function () {
         console.log('A user has disconnected');
-    })
+    });
+    socket.on('chat', function (msg) {
+        console.log(msg);
+    });
 })
