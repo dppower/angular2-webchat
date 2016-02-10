@@ -1,4 +1,4 @@
-System.register(['angular2/core'], function(exports_1) {
+System.register(["angular2/core"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18,11 +18,12 @@ System.register(['angular2/core'], function(exports_1) {
         execute: function() {
             ChatInput = (function () {
                 function ChatInput() {
-                    this.message = "";
+                    this.message = "Enter a new message...";
                     this.addNewMessage = new core_1.EventEmitter();
                 }
                 ChatInput.prototype.sendMessage = function () {
                     this.addNewMessage.emit(this.message);
+                    this.message = "";
                 };
                 __decorate([
                     core_1.Output(), 
@@ -30,8 +31,8 @@ System.register(['angular2/core'], function(exports_1) {
                 ], ChatInput.prototype, "addNewMessage", void 0);
                 ChatInput = __decorate([
                     core_1.Component({
-                        selector: 'chat-input',
-                        template: "\n        <div>\n            <input type=\"text\" id=\"message-box\" [(ngModel)]=\"message\">\n            <button id=\"send-message-btn\" (click)=\"sendMessage()\">Send</button>\n        </div>\n    "
+                        selector: "chat-input",
+                        template: "\n        <div class=\"row\">\n            <div class=\"col-xs-8 col-sm-9\">\n                <input type=\"text\" id=\"message-box\" class=\"form-control input-lg\" [(ngModel)]=\"message\">\n            </div>\n            <div class=\"col-xs-4 col-sm-3\">\n                <button id=\"send-message-btn\" class=\"btn btn-primary btn-lg btn-block\" (click)=\"sendMessage()\">Send</button>\n            </div>\n        </div>\n    "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], ChatInput);

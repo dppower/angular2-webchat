@@ -1,19 +1,24 @@
-import {Component, Output, EventEmitter} from 'angular2/core'
+import {Component, Output, EventEmitter} from "angular2/core";
 
 @Component({
-    selector: 'chat-input',
+    selector: "chat-input",
     template: `
-        <div>
-            <input type="text" id="message-box" [(ngModel)]="message">
-            <button id="send-message-btn" (click)="sendMessage()">Send</button>
+        <div class="row">
+            <div class="col-xs-8 col-sm-9">
+                <input type="text" id="message-box" class="form-control input-lg" [(ngModel)]="message" required>
+            </div>
+            <div class="col-xs-4 col-sm-3">
+                <button id="send-message-btn" class="btn btn-primary btn-lg btn-block" (click)="sendMessage()">Send</button>
+            </div>
         </div>
     `
 })
 export class ChatInput {
-    message: String = "";
-    @Output() addNewMessage: EventEmitter<any> = new EventEmitter();
+    message: string = "Enter a new message...";
+    @Output() addNewMessage: EventEmitter<string> = new EventEmitter<string>();
 
     sendMessage() {
         this.addNewMessage.emit(this.message);
+        this.message = "";
     }
 }

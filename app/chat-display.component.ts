@@ -1,26 +1,12 @@
-import {Component} from 'angular2/core'
-import {ChatInput} from './chat-input.component';
-import {SocketService} from './socket-service';
+import {Component} from "angular2/core";
+import {Input} from "angular2/core";
 
 @Component({
-    selector: 'chat-display',
+    selector: "chat-display",
     template: `
-        <p *ngFor='#msg of messages'>{{msg}}</p>
-        <chat-input (addNewMessage)="addMessageToArray($event)"></chat-input>
-    `,
-    directives: [ChatInput]
+        <p>{{message}}</p>
+    `
 })
 export class ChatDisplay {
-    constructor(private socket_: SocketService) {
-        this.socket_.socket.on('chat', function (msg) {
-            this.messages.push(msg);
-        });
-    };
-
-    messages: String[] = [];
-
-    addMessageToArray(msg) {
-        this.messages.push(msg);
-        this.socket_.socket.emit('chat', msg);
-    }
+    @Input() message: string;
 }
