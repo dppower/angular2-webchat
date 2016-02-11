@@ -15,7 +15,7 @@ import {ChatInput} from './chat-input.component';
         </div>
         <footer class="footer">
             <div class="container-fluid">
-                <chat-input (addNewMessage)="addMessageToArray($event)"></chat-input>
+                <chat-input (addNewMessage)="emitMessage($event)"></chat-input>
             </div>
         </footer>
     `,
@@ -23,16 +23,18 @@ import {ChatInput} from './chat-input.component';
     providers: [SocketService]
 })
 export class AppComponent {
-    constructor(private socket_: SocketService) {
-        this.socket_.socket.on('chat', function (msg) {
- 
-        });
-    };
-
     messages: string[] = [];
 
-    addMessageToArray(msg) {
-        this.messages.push(msg);
-        this.socket_.socket.emit('chat', msg);
+    constructor(public socket_: SocketService) {
+        this.socket_.socket.on('chat', data => {
+            var chat: string = data.clientId + ": " + data.message;
+            this.messages.push(chat);
+        });
+    };
+    
+    emitMessage(msg) {
+        this.messages.push(this.socket_.socket.id + ": " + msg);
+        var chat = { message: msg, clientId: this.socket_.socket.id };
+        this.socket_.socket.emit('chat', chat);
     }
 }

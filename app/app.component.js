@@ -27,20 +27,24 @@ System.register(['angular2/core', './socket-service', './chat-display.component'
         execute: function() {
             AppComponent = (function () {
                 function AppComponent(socket_) {
+                    var _this = this;
                     this.socket_ = socket_;
                     this.messages = [];
-                    this.socket_.socket.on('chat', function (msg) {
+                    this.socket_.socket.on('chat', function (data) {
+                        var chat = data.clientId + ": " + data.message;
+                        _this.messages.push(chat);
                     });
                 }
                 ;
-                AppComponent.prototype.addMessageToArray = function (msg) {
-                    this.messages.push(msg);
-                    this.socket_.socket.emit('chat', msg);
+                AppComponent.prototype.emitMessage = function (msg) {
+                    this.messages.push(this.socket_.socket.id + ":" + msg);
+                    var chat = { message: msg, clientId: this.socket_.socket.id };
+                    this.socket_.socket.emit('chat', chat);
                 };
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: "my-app",
-                        template: "\n        <div class=\"wrap\">\n            <div class=\"container-fluid\">\n                <h2>Webchat</h2>\n                <chat-display *ngFor=\"#msg of messages\" [message]=\"msg\"></chat-display>\n                <div class=\"push\"></div>\n            </div>\n        </div>\n        <footer class=\"footer\">\n            <div class=\"container-fluid\">\n                <chat-input (addNewMessage)=\"addMessageToArray($event)\"></chat-input>\n            </div>\n        </footer>\n    ",
+                        template: "\n        <div class=\"wrap\">\n            <div class=\"container-fluid\">\n                <h2>Webchat</h2>\n                <chat-display *ngFor=\"#msg of messages\" [message]=\"msg\"></chat-display>\n                <div class=\"push\"></div>\n            </div>\n        </div>\n        <footer class=\"footer\">\n            <div class=\"container-fluid\">\n                <chat-input (addNewMessage)=\"emitMessage($event)\"></chat-input>\n            </div>\n        </footer>\n    ",
                         directives: [chat_display_component_1.ChatDisplay, chat_input_component_1.ChatInput],
                         providers: [socket_service_1.SocketService]
                     }), 

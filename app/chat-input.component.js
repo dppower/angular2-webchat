@@ -20,9 +20,18 @@ System.register(["angular2/core"], function(exports_1) {
                 function ChatInput() {
                     this.message = "Enter a new message...";
                     this.addNewMessage = new core_1.EventEmitter();
+                    this.active = true;
                 }
                 ChatInput.prototype.sendMessage = function () {
-                    this.addNewMessage.emit(this.message);
+                    var _this = this;
+                    if (this.message != "") {
+                        this.addNewMessage.emit(this.message);
+                    }
+                    this.message = "";
+                    this.active = false;
+                    setTimeout(function () { return _this.active = true; }, 0);
+                };
+                ChatInput.prototype.clearInput = function () {
                     this.message = "";
                 };
                 __decorate([
@@ -32,7 +41,7 @@ System.register(["angular2/core"], function(exports_1) {
                 ChatInput = __decorate([
                     core_1.Component({
                         selector: "chat-input",
-                        template: "\n        <div class=\"row\">\n            <div class=\"col-xs-8 col-sm-9\">\n                <input type=\"text\" id=\"message-box\" class=\"form-control input-lg\" [(ngModel)]=\"message\">\n            </div>\n            <div class=\"col-xs-4 col-sm-3\">\n                <button id=\"send-message-btn\" class=\"btn btn-primary btn-lg btn-block\" (click)=\"sendMessage()\">Send</button>\n            </div>\n        </div>\n    "
+                        template: "\n        <div class=\"row\">\n            <form *ngIf=\"active\" (ngSubmit)=\"sendMessage()\" #thisForm=\"ngForm\" autocomplete=\"off\" novalidate autofocus=\"true\">\n                <div class=\"col-xs-8 col-sm-9\">\n                    <input type=\"text\" id=\"message-box\" class=\"form-control input-lg\" (click)=\"clearInput()\" [(ngModel)]=\"message\" required ngControl=\"newChat\" #chat=\"ngForm\">\n                </div>\n                <div class=\"col-xs-4 col-sm-3\">\n                    <button type=\"submit\" id=\"send-message-btn\" class=\"btn btn-primary btn-lg btn-block\" [disabled]=\"!thisForm.form.valid\">Send</button>\n                </div>\n            </form>\n        </div>\n    "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], ChatInput);
