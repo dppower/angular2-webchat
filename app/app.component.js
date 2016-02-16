@@ -26,20 +26,21 @@ System.register(['angular2/core', './socket-service', './chat-display.component'
             }],
         execute: function() {
             AppComponent = (function () {
-                function AppComponent(socket_) {
-                    var _this = this;
-                    this.socket_ = socket_;
+                function AppComponent(socketService_) {
+                    this.socketService_ = socketService_;
                     this.messages = [];
-                    this.socket_.socket.on('chat', function (data) {
+                }
+                ;
+                AppComponent.prototype.ngOnInit = function () {
+                    var _this = this;
+                    this.socketService_.chatStream.subscribe(function (data) {
                         var chat = data.clientId + ": " + data.message;
                         _this.messages.push(chat);
                     });
-                }
-                ;
+                };
                 AppComponent.prototype.emitMessage = function (msg) {
-                    this.messages.push(this.socket_.socket.id + ":" + msg);
-                    var chat = { message: msg, clientId: this.socket_.socket.id };
-                    this.socket_.socket.emit('chat', chat);
+                    var chat = { message: msg, clientId: this.socketService_.socketId };
+                    this.socketService_.emitMessage(chat);
                 };
                 AppComponent = __decorate([
                     core_1.Component({

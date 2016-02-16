@@ -23,6 +23,7 @@ ws.on('connection', function (socket) {
     });
     socket.on('chat', function (chat) {
         console.log("user_id: " + chat.clientId + ", message: " + chat.message);
+        socket.emit('chat', chat);
         socket.broadcast.emit('chat', chat);
     });
 })

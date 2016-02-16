@@ -1,7 +1,8 @@
-import {Component} from 'angular2/core';
+import {Component, OnInit} from 'angular2/core';
 import {SocketService} from './socket-service';
 import {ChatDisplay} from './chat-display.component';
 import {ChatInput} from './chat-input.component';
+import {ChatMessage} from "./chat-message";
 
 @Component({
     selector: "my-app",
@@ -22,19 +23,20 @@ import {ChatInput} from './chat-input.component';
     directives: [ChatDisplay, ChatInput],
     providers: [SocketService]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
     messages: string[] = [];
 
-    constructor(public socket_: SocketService) {
-        this.socket_.socket.on('chat', data => {
-            var chat: string = data.clientId + ": " + data.message;
+    constructor(private socketService_: SocketService) { };
+    
+    ngOnInit() {
+        this.socketService_.chatStream.subscribe(data => {
+            var chat = data.clientId + ": " + data.message;
             this.messages.push(chat);
         });
-    };
-    
+    }
+
     emitMessage(msg) {
-        this.messages.push(this.socket_.socket.id + ": " + msg);
-        var chat = { message: msg, clientId: this.socket_.socket.id };
-        this.socket_.socket.emit('chat', chat);
+        var chat: ChatMessage = { message: msg, clientId: this.socketService_.socketId };
+        this.socketService_.emitMessage(chat);
     }
 }
