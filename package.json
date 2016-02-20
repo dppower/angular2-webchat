@@ -4,12 +4,13 @@
   "description": "A simple chatroom build with angular2 and socket.io",
   "main": "server.js",
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "start": "npm run tsc && node server.js"
   },
   "author": "David",
   "license": "ISC",
   "dependencies": {
-    "angular2": "^2.0.0-beta.3",
+    "angular2": "^2.0.0-beta.6",
     "bootstrap": "^3.3.6",
     "es6-promise": "^3.0.2",
     "es6-shim": "^0.33.3",

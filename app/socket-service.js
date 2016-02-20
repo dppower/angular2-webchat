@@ -23,6 +23,7 @@ System.register(["angular2/core", "rxjs/Rx"], function(exports_1) {
                 function SocketService() {
                     this.socket_ = io.connect();
                     this.chatStream = Rx_1.Observable.fromEvent(this.socket_, "chat");
+                    this.previousNames = Rx_1.Observable.fromEvent(this.socket_, "previous-names");
                 }
                 Object.defineProperty(SocketService.prototype, "socketId", {
                     get: function () { return this.socket_.id; },
@@ -31,6 +32,7 @@ System.register(["angular2/core", "rxjs/Rx"], function(exports_1) {
                 });
                 ;
                 SocketService.prototype.emitMessage = function (chat) { this.socket_.emit("chat", chat); };
+                SocketService.prototype.getPreviousNames = function () { this.socket_.emit("previousNames"); };
                 SocketService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [])

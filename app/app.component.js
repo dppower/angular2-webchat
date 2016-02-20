@@ -1,4 +1,4 @@
-System.register(['angular2/core', './socket-service', './chat-display.component', './chat-input.component'], function(exports_1) {
+System.register(["angular2/core", "angular2/router", "./socket-service", "./chatroom.component"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,48 +8,39 @@ System.register(['angular2/core', './socket-service', './chat-display.component'
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, socket_service_1, chat_display_component_1, chat_input_component_1;
+    var core_1, router_1, socket_service_1, chatroom_component_1;
     var AppComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
             function (socket_service_1_1) {
                 socket_service_1 = socket_service_1_1;
             },
-            function (chat_display_component_1_1) {
-                chat_display_component_1 = chat_display_component_1_1;
-            },
-            function (chat_input_component_1_1) {
-                chat_input_component_1 = chat_input_component_1_1;
+            function (chatroom_component_1_1) {
+                chatroom_component_1 = chatroom_component_1_1;
             }],
         execute: function() {
             AppComponent = (function () {
-                function AppComponent(socketService_) {
-                    this.socketService_ = socketService_;
-                    this.messages = [];
+                function AppComponent() {
                 }
-                ;
-                AppComponent.prototype.ngOnInit = function () {
-                    var _this = this;
-                    this.socketService_.chatStream.subscribe(function (data) {
-                        var chat = data.clientId + ": " + data.message;
-                        _this.messages.push(chat);
-                    });
-                };
-                AppComponent.prototype.emitMessage = function (msg) {
-                    var chat = { message: msg, clientId: this.socketService_.socketId };
-                    this.socketService_.emitMessage(chat);
-                };
                 AppComponent = __decorate([
                     core_1.Component({
-                        selector: "my-app",
-                        template: "\n        <div class=\"wrap\">\n            <div class=\"container-fluid\">\n                <h2>Webchat</h2>\n                <chat-display *ngFor=\"#msg of messages\" [message]=\"msg\"></chat-display>\n                <div class=\"push\"></div>\n            </div>\n        </div>\n        <footer class=\"footer\">\n            <div class=\"container-fluid\">\n                <chat-input (addNewMessage)=\"emitMessage($event)\"></chat-input>\n            </div>\n        </footer>\n    ",
-                        directives: [chat_display_component_1.ChatDisplay, chat_input_component_1.ChatInput],
+                        selector: 'my-app',
+                        template: "\n            <div class=\"main-page container\">\n                <div class=\"title-box\">\n                    <h2>Webchat</h2>\n                </div>\n                <router-outlet></router-outlet>\n            </div>\n            ",
+                        directives: [router_1.ROUTER_DIRECTIVES],
                         providers: [socket_service_1.SocketService]
-                    }), 
-                    __metadata('design:paramtypes', [socket_service_1.SocketService])
+                    }),
+                    router_1.RouteConfig([
+                        { path: '/', name: 'Register', component: chatroom_component_1.ChatRoomComponent, useAsDefault: true },
+                        { path: '/register', name: 'Register', component: chatroom_component_1.ChatRoomComponent },
+                        { path: '/chat', name: 'Chat', component: chatroom_component_1.ChatRoomComponent },
+                    ]), 
+                    __metadata('design:paramtypes', [])
                 ], AppComponent);
                 return AppComponent;
             })();

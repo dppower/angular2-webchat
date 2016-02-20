@@ -1,42 +1,24 @@
-import {Component, OnInit} from 'angular2/core';
-import {SocketService} from './socket-service';
-import {ChatDisplay} from './chat-display.component';
-import {ChatInput} from './chat-input.component';
-import {ChatMessage} from "./chat-message";
+import {Component} from "angular2/core";
+import {RouteConfig, ROUTER_DIRECTIVES} from "angular2/router";
+import {SocketService} from "./socket-service";
+import {ChatRoomComponent} from "./chatroom.component";
 
 @Component({
-    selector: "my-app",
+    selector: 'my-app',
     template: `
-        <div class="wrap">
-            <div class="container-fluid">
-                <h2>Webchat</h2>
-                <chat-display *ngFor="#msg of messages" [message]="msg"></chat-display>
-                <div class="push"></div>
+            <div class="main-page container">
+                <div class="title-box">
+                    <h2>Webchat</h2>
+                </div>
+                <router-outlet></router-outlet>
             </div>
-        </div>
-        <footer class="footer">
-            <div class="container-fluid">
-                <chat-input (addNewMessage)="emitMessage($event)"></chat-input>
-            </div>
-        </footer>
-    `,
-    directives: [ChatDisplay, ChatInput],
+            `,
+    directives: [ROUTER_DIRECTIVES],
     providers: [SocketService]
 })
-export class AppComponent implements OnInit {
-    messages: string[] = [];
-
-    constructor(private socketService_: SocketService) { };
-    
-    ngOnInit() {
-        this.socketService_.chatStream.subscribe(data => {
-            var chat = data.clientId + ": " + data.message;
-            this.messages.push(chat);
-        });
-    }
-
-    emitMessage(msg) {
-        var chat: ChatMessage = { message: msg, clientId: this.socketService_.socketId };
-        this.socketService_.emitMessage(chat);
-    }
-}
+    @RouteConfig([
+        { path: '/', name: 'Register', component: ChatRoomComponent, useAsDefault: true },
+        { path: '/register', name: 'Register', component: ChatRoomComponent},
+        { path: '/chat', name: 'Chat', component: ChatRoomComponent},
+])
+export class AppComponent { }
