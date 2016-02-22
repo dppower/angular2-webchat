@@ -1,5 +1,6 @@
 import {Component, Output, EventEmitter} from "angular2/core";
 import {RepeatFocus} from "./repeat-focus.directive";
+import {RefocusEvents} from "./refocus-event.service";
 
 @Component({
     selector: "chat-input",
@@ -7,7 +8,7 @@ import {RepeatFocus} from "./repeat-focus.directive";
         <div class="row">
             <form *ngIf="active" (ngSubmit)="sendMessage()" #thisForm="ngForm" autocomplete="off" novalidate>
                 <div class="col-xs-8 col-sm-9">
-                    <input type="text" id="message-box" class="form-control input-lg" [(ngModel)]="message" required ngControl="newMsg" placeholder="Enter a new message..." repeatFocus autofocus="true">
+                    <input type="text" id="message-box" class="form-control input-lg" [(ngModel)]="message" required ngControl="newMsg" placeholder="Enter a new message..." repeatFocus>
                 </div>
                 <div class="col-xs-4 col-sm-3">
                     <button type="submit" class="btn btn-primary btn-lg btn-block">Send</button>
@@ -15,14 +16,16 @@ import {RepeatFocus} from "./repeat-focus.directive";
             </form>
         </div>
     `,
-    directives: [RepeatFocus]
+    directives: [RepeatFocus],
+    providers: [RefocusEvents]
 })
 export class ChatInput {
     message: string;
     @Output() addNewMessage: EventEmitter<string> = new EventEmitter<string>();
-    @Output() refocusEvent: EventEmitter<any> = new EventEmitter<any>();
 
     active: boolean = true;
+
+    constructor(private refocusEmitter: RefocusEvents) { }
 
     sendMessage() {
         if (this.message != "")
@@ -32,6 +35,6 @@ export class ChatInput {
         this.message = "";
         //this.active = false;
         //setTimeout(() => this.active = true, 0);
-        this.refocusEvent.emit(null);
+        this.refocusEmitter.emit("refocus");
     }
 }

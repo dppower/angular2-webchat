@@ -1,14 +1,22 @@
-import {Directive, ElementRef} from "angular2/core";
+import {Directive, ElementRef, OnDestroy} from "angular2/core";
+import {RefocusEvents} from "./refocus-event.service";
 
 @Directive({
     selector: "[repeatFocus]",
-    host: { "(refocusEvent)": "focus()" }
 })
-export class RepeatFocus {
+export class RepeatFocus implements OnDestroy {
 
-    constructor(private elem: ElementRef) { }
+    subscription: any;
+
+    constructor(private elem: ElementRef, private eventEmitter: RefocusEvents) {
+        this.subscription = this.eventEmitter.subscribe((data) => this.focus(data));
+    }
     
-    focus() {
+    focus(event) {
         this.elem.nativeElement.focus();
-    } 
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
 }
