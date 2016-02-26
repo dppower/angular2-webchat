@@ -1,16 +1,13 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "system",
     "moduleResolution": "node",
     "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "outDir": "./build"
-  },
-  "files": [
-    "server.ts",
-    "routes.ts",
-    "main.d.ts"
-  ]
+    "outDir": "../build/app"
+  }
 }

@@ -2,10 +2,11 @@
   "name": "angular2-webchat",
   "version": "1.0.0",
   "description": "A simple chatroom build with angular2 and socket.io",
-  "main": "server.js",
+  "main": "build/server.js",
   "scripts": {
-    "tsc": "tsc",
-    "start": "npm run tsc && node server.js"
+    "tsc-s": "tsc -p ./",
+    "tsc-c": "tsc -p ./app/",
+    "start": "npm run tsc-s && npm run tsc-c && node build/server.js"
   },
   "author": "David",
   "license": "ISC",
