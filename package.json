@@ -4,6 +4,7 @@
   "description": "A simple chatroom build with angular2 and socket.io",
   "main": "build/server.js",
   "scripts": {
+    "db": "mongod -f ./etc/mongod.config",
     "tsc-s": "tsc -p ./",
     "tsc-c": "tsc -p ./app/",
     "start": "npm run tsc-s && npm run tsc-c && node build/server.js"
