@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Output} from 'angular2/core';
+import {Component, OnInit, EventEmitter, Output, ChangeDetectionStrategy, SimpleChange} from 'angular2/core';
 import { AsyncPipe } from "angular2/common";
 import * as rx from "rxjs/Rx";
 import {SocketService} from './socket-service';
@@ -22,10 +22,10 @@ import {ScrollEvents} from "./scroll-event.service";
             </div>
             <div class="row">
                 <div class="chat-box col-xs-8 col-sm-9" autoScroll>
-                    <p *ngFor="#msg of messages">{{msg}}</p>
+                    <p *ngFor="#msg of messages | async">{{msg}}</p>
                 </div>
                 <div class="user-list col-xs-4 col-sm-3">
-                    <p *ngFor="#user of users">{{user.name}}</p>
+                    <p *ngFor="#user of userslist | async">{{user}}</p>
                 </div>
             </div>
         </div>
@@ -35,30 +35,34 @@ import {ScrollEvents} from "./scroll-event.service";
     `,
     directives: [ChatDisplay, ChatInput, UserList, AutoScroll],
     providers: [ScrollEvents],
-    pipes: [AsyncPipe]
+    pipes: [AsyncPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatRoomComponent implements OnInit {
-    messages: string[] = [];
-    userslist: rx.Observable<{ name: string, socket: string }>;
-    users: { name: string, socket: string }[] = [];
+    
+    messages: rx.Observable<string[]>;
+    userslist: rx.Observable<string[]>;
 
     constructor(private socketService_: SocketService, private scrollEvent: ScrollEvents) {
-        this.userslist = this.socketService_.newUser.merge(this.socketService_.userList);
+        this.userslist = this.socketService_.newUser.merge(this.socketService_.userList)
+            .map(user => Array<string>(user.name))
+            .scan<string[]>((i, j) => i.concat(j));
 
         this.socketService_.userDisconnected.subscribe(name => {
-            this.users = this.users.filter(obj => obj.name != name);
+            //this.users = this.users.filter(obj => obj.name != name);
         });
         
     };
 
     ngOnInit() {
-        this.socketService_.chatStream.subscribe(chat => { this.messages.push(chat.clientId + ": " + chat.message); });
-        this.userslist.subscribe(user => this.users.push(user));
+        this.messages = this.socketService_.chatStream
+            .map(chat => Array(chat.clientId + ": " + chat.message))
+            .scan<string[]>((i, j) => i.concat(j));
+        this.messages.subscribe(msg => this.scrollEvent.emit("scroll"));
     }
 
     emitMessage(msg) {
         var chat = new ChatMessage(msg, this.socketService_.socketId);
         this.socketService_.emitMessage(chat);
-        this.scrollEvent.emit("scroll");
     }
 }
