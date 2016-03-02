@@ -42,15 +42,23 @@ export class ChatRoomComponent implements OnInit {
     
     messages: rx.Observable<string[]>;
     userslist: rx.Observable<string[]>;
+    usersReplay: rx.ReplaySubject<string>;
 
     constructor(private socketService_: SocketService, private scrollEvent: ScrollEvents) {
-        this.userslist = this.socketService_.newUser.merge(this.socketService_.userList)
-            .map(user => Array<string>(user.name))
-            .scan<string[]>((i, j) => i.concat(j));
+        this.usersReplay = new rx.ReplaySubject<string>();
+        rx.Observable.merge<{ name: string, socket: string }>(this.socketService_.userList, this.socketService_.newUser).map(x => x.name).subscribe(this.usersReplay);
+        
+        this.userslist = this.usersReplay.map(user => Array<string>(user)).scan<string[]>((i, j) => i.concat(j));
 
-        this.socketService_.userDisconnected.subscribe(name => {
-            //this.users = this.users.filter(obj => obj.name != name);
-        });
+        //this.socketService_.userDisconnected
+        //    .subscribe(name => {
+
+        //        //rx.Observable.concat(this.usersList.last(), 
+        //        //this.usersList = this.usersReplay.filter(e => e != name).map(user => Array<string>(user))
+        //        //    .scan<string[]>((i, j) => i.concat(j));
+
+        //        //this.usersList = this.usersList.map(array => array.filter(e => nameArray.indexOf(e) === -1));
+        //    });
         
     };
 

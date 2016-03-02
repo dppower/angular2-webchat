@@ -38,9 +38,8 @@ wss.on("connection", function (socket) {
         var userList = rx.Observable.fromArray(users);
 
         userList.subscribe(user => {
-            socket.emit("users-list", user);
+            socket.emit("user-list", user);
         });
-       
         socket.broadcast.emit("new-user", newUser);
     });
 
