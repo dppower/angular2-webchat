@@ -42,23 +42,24 @@ export class ChatRoomComponent implements OnInit {
     
     messages: rx.Observable<string[]>;
     userslist: rx.Observable<string[]>;
-    usersReplay: rx.ReplaySubject<string>;
+    //usersReplay: rx.ReplaySubject<string>;
 
     constructor(private socketService_: SocketService, private scrollEvent: ScrollEvents) {
-        this.usersReplay = new rx.ReplaySubject<string>();
-        rx.Observable.merge<{ name: string, socket: string }>(this.socketService_.userList, this.socketService_.newUser).map(x => x.name).subscribe(this.usersReplay);
+        //this.usersReplay = new rx.ReplaySubject<string>();
+        //rx.Observable.merge<{ name: string, socket: string }>(this.socketService_.userListrp, this.socketService_.newUser).map(x => x.name);
         
-        this.userslist = this.usersReplay.map(user => Array<string>(user)).scan<string[]>((i, j) => i.concat(j));
+        this.userslist = this.socketService_.userListrp.concat<{ name: string, socket: string }>(this.socketService_.newUser).map(user => Array<string>(user.name)).scan<string[]>((i, j) => i.concat(j));
 
-        //this.socketService_.userDisconnected
-        //    .subscribe(name => {
+        this.socketService_.userDisconnected
+            .subscribe(name => {
 
-        //        //rx.Observable.concat(this.usersList.last(), 
-        //        //this.usersList = this.usersReplay.filter(e => e != name).map(user => Array<string>(user))
-        //        //    .scan<string[]>((i, j) => i.concat(j));
-
-        //        //this.usersList = this.usersList.map(array => array.filter(e => nameArray.indexOf(e) === -1));
-        //    });
+                //this.userslist = this.socketService_.userListrp.merge(this.socketService_.newUser).filter(e => e != name).map(user => Array<string>(user.name)).scan<string[]>((i, j) => i.concat(j));;
+                //rx.Observable.concat(this.usersList.last(), 
+                //this.usersList = this.usersReplay.filter(e => e != name).map(user => Array<string>(user))
+                //    .scan<string[]>((i, j) => i.concat(j));
+                
+                //this.usersList = this.usersList.map(array => array.filter(e => nameArray.indexOf(e) === -1));
+            });
         
     };
 
