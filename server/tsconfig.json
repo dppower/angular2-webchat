@@ -6,7 +6,7 @@
     "sourceMap": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "outDir": "./build"
+    "outDir": "../build"
   },
   "files": [
     "server.ts",

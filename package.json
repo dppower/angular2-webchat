@@ -4,8 +4,8 @@
   "description": "A simple chatroom build with angular2 and socket.io",
   "main": "build/server.js",
   "scripts": {
-    "db": "mongod -f ./etc/mongod.config",
-    "tsc-s": "tsc -p ./",
+    "db": "mongod -f ./config/mongod.config",
+    "tsc-s": "tsc -p ./server/",
     "tsc-c": "tsc -p ./app/",
     "start": "npm run tsc-s && npm run tsc-c && node build/server.js"
   },
@@ -19,6 +19,8 @@
     "es6-promise": "^3.0.2",
     "es6-shim": "^0.33.3",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "mongodb": "^2.1.7",
     "morgan": "^1.7.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",

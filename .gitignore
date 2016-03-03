@@ -1,7 +1,7 @@
 public/
 build/
 db/
-etc/
+config/
 node_modules/
 typings/
 typings.json
