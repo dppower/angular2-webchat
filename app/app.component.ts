@@ -19,7 +19,6 @@ import {RegisterComponent} from "./register.component";
 })
     @RouteConfig([
         { path: '/', name: 'Register', component: RegisterComponent, useAsDefault: true },
-        { path: '/register', name: 'Register', component: RegisterComponent},
         { path: '/chat', name: 'Chat', component: ChatRoomComponent},
 ])
 export class AppComponent { }

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -11,6 +11,8 @@
   "files": [
     "server.ts",
     "routes.ts",
+    "db-config.ts",
+    "passport-config.ts",
     "main.d.ts"
   ]
 }

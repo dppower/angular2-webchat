@@ -2,7 +2,11 @@ import * as express from "express";
 import morgan = require("morgan");
 import bodyParser = require("body-parser");
 import cookieParser = require("cookie-parser");
-import rx = require("rxjs/Rx");
+import * as session from "express-session";
+import {Observable} from "rxjs/Rx";
+import {mongoose, dbConfig} from "./db-config";
+import * as passport from "passport";
+import {passportConfig} from "./passport-config";
 import path = require("path");
 import http = require("http");
 import * as io from "socket.io";
@@ -11,18 +15,24 @@ var app = express();
 var server = http.createServer(app);
 var wss = io(server);
 
-import {Router} from "./routes";
+mongoose.connect(dbConfig.url);
+passportConfig(passport);
 
-app.use(Router);
+app.use(session({ secret: "myBigSecret" }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "/../public")));
 app.use(express.static(path.join(__dirname, "/../node_modules")));
-app.use(express.static(path.join(__dirname, "/")));
 
 app.set("port", process.env.PORT || 3000);
+
+import {routeConfig} from "./routes";
+routeConfig(app, passport);
 
 server.listen(app.get("port"), function () {
     console.log("Server is listening on port " + app.get("port"));
@@ -40,11 +50,11 @@ wss.on("connection", function (socket) {
         var newUser = { name: username, socket: clientId };
         users.push(newUser);
 
-        var userList = rx.Observable.fromArray(users);
+        var userList = Observable.fromArray(users);
 
         userList.subscribe(
             user => { socket.emit("user-list", user); },
-            error => { console.log(error); },
+            err => { console.log(err); },
             () => { socket.emit("list-completed"); }
         );
 
