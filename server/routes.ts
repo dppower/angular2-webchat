@@ -5,14 +5,10 @@ import bodyParser = require("body-parser");
 
 export var routeConfig = function (app, passport: Passport) {
 
-    app.get("/", function (req, res) {
+    app.get("*", function (req, res) {
         res.sendFile(path.join(__dirname, "/../public/html/index.html"));
     });
-
-    app.get("/test", function (req, res) {
-        res.send({ message: "post request to register received." });
-    });
-
+    
     app.post("/register", function (req, res, next) {
         passport.authenticate("local-signup", function (err, user, info) {
             if (err)
@@ -23,10 +19,12 @@ export var routeConfig = function (app, passport: Passport) {
             {
                 return res.json({"message": info.message });
             }
-            if (user)
-            {
-                return res.json({ "user": user.username, "message": info.message });
-            }
+            req.login(user, err => {
+                if (err) { return next(err); }
+                console.log(req.session.passport.user);
+                console.log(req.user);
+                return res.json({ "id": user._id, "user": user.username, "message": info.message });
+            });
         })(req, res, next);
     });
 
@@ -40,10 +38,10 @@ export var routeConfig = function (app, passport: Passport) {
             {
                 return res.json({ "message": info.message });
             }
-            if (user)
-            {
-                return res.json({ "user": user.username, "message": info.message });
-            }
+            req.login(user, err => {
+                if (err) { return next(err); }
+                return res.json({ "id": user._id, "user": user.username, "message": info.message });
+            });
         })(req, res, next);
     });
 
@@ -55,8 +53,8 @@ export var routeConfig = function (app, passport: Passport) {
     //app.get("/chat", isLoggedIn, (req, res) => {
     //});
     // Check to see if the user is authenticated
-    var isLoggedIn = (req, res, next) => {
-        if (req.isAutheticated()) { return next(); };
-        res.redirect("/");
-    }
+    //var isLoggedIn = (req, res, next) => {
+    //    if (req.isAutheticated()) { return next(); };
+    //    res.redirect("/");
+    //}
 }

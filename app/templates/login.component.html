@@ -1,0 +1,18 @@
+<div class="col-sm-6 col-sm-offset-3">
+    <h1>{{isLogin ? loginText.title : registerText.title }}</h1>
+    <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" [(ngModel)]="username" placeholder="username">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" [(ngModel)]="password" placeholder="password">
+        </div>
+        <div *ngIf="responseMessage">{{responseMessage}}</div>
+        <div *ngIf="errorMessage">{{errorMessage}}</div>
+        <button type="submit" class="btn btn-warning btn-lg">{{isLogin ? loginText.title : registerText.title }}</button>
+    </form>
+    <p></p>
+    <p>{{isLogin ? loginText.text : registerText.text }} <span class="fake-link" (click)="toggleLogin()">{{isLogin ? registerText.title : loginText.title }}</span></p>
+</div>

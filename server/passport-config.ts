@@ -22,14 +22,13 @@ export var passportConfig = function (passport) {
             if (user)
             {
                 return done(null, null, { message: "This username is already in use." });
-            } else
-            {
-                var newUser = new User({ username: username, password: password });
-                newUser.saveDocument((err, user) => {
-                    if (err) return done(err, null, { message: "The new user could not be saved to db." });
-                    return done(null, user, { message: "A new user was successfully added to the db." });
-                });
             }
+             
+            var newUser = new User({ username: username, password: password });
+            newUser.saveDocument((err, user) => {
+                if (err) return done(err, null, { message: "The new user could not be saved to db." });
+                return done(null, user, { message: "A new user was successfully registered." });
+            });
         });
     }));
 
@@ -39,11 +38,18 @@ export var passportConfig = function (passport) {
             {
                 return done(err, null, { message: "The db search failed." });
             }
-            if (!user || !User.checkPassword(password, user))
+            if (!user)
             {
                 return done(null, null, { message: "Invalid username or password!" });
             }
-            return done(null, user, { message: user.username + " successfully logged in" });
+            
+            User.isCorrectPassword(password, user).then(isCorrect => {
+                if (isCorrect)
+                {
+                    return done(null, user, { message: user.username + " successfully logged in" });
+                }
+                return done(null, null, { message: "Invalid username or password!" });
+            })
         });
     }));
 }

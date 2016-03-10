@@ -15,24 +15,27 @@ var app = express();
 var server = http.createServer(app);
 var wss = io(server);
 
+app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, "/../public")));
+app.use(express.static(path.join(__dirname, "/../node_modules")));
+
 mongoose.connect(dbConfig.url);
 passportConfig(passport);
 
-app.use(session({ secret: "myBigSecret" }));
+app.use(cookieParser());
+
+app.use(session({ secret: "myBigSecret", resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "/../public")));
-app.use(express.static(path.join(__dirname, "/../node_modules")));
 
 app.set("port", process.env.PORT || 3000);
 
 import {routeConfig} from "./routes";
 routeConfig(app, passport);
+
 
 server.listen(app.get("port"), function () {
     console.log("Server is listening on port " + app.get("port"));

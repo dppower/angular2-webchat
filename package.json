@@ -5,9 +5,10 @@
   "main": "build/server.js",
   "scripts": {
     "db": "mongod -f ./config/mongod.config",
+    "copy-templates": "copy .\\app\\templates\\*.html .\\public\\app\\templates",
     "tsc-s": "tsc -p ./server/",
     "tsc-c": "tsc -p ./app/",
-    "start": "npm run tsc-s && npm run tsc-c && node build/server.js"
+    "start": "npm run copy-templates && npm run tsc-s && npm run tsc-c && node build/server.js"
   },
   "author": "David",
   "license": "ISC",

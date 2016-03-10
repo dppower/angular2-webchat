@@ -39,6 +39,11 @@ export class User {
         });
     };
 
+    static checkPasswords = (password: string, hash: string) => {
+        return new Promise<boolean>((resolve, reject) => {
+            resolve(bcrypt.compareSync(password, hash));
+        });
+    };
     encryptPassword = async () => {
         this.model_.salt = await this.generateSalt().catch((err: Error) => console.log("salt error: " + err.message));
         this.model_.password = await this.generateHash(this.model_.password, this.model_.salt).catch((err: Error) => console.log("hash error: " + err.message)); 
@@ -48,8 +53,8 @@ export class User {
         await this.encryptPassword().then(() => { this.model_.save(onSaveDocument); });
     };
 
-    static checkPassword = (password: string, user: IUserModel): boolean => {
-        return bcrypt.compareSync(password, user.password);
+    static isCorrectPassword = async (password: string, user: IUserModel) => {
+        return await User.checkPasswords(password, user.password);
     };
 
     constructor(document: IUser) {
