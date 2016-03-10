@@ -21,9 +21,12 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                console.log(req.session.passport.user);
-                console.log(req.user);
-                return res.json({ "id": user._id, "user": user.username, "message": info.message });
+                //console.log(req.session.passport.user);
+                //console.log(req.user);
+                //console.log("session.id: " + req.session.id);
+                //console.log("sessionID: " + req.sessionID);
+                //console.log("session cookie: " + JSON.stringify(req.session.cookie));
+                return res.json({ "id": user._id, "user": user.username, "message": info.message, "authenticated": req.isAuthenticated() });
             });
         })(req, res, next);
     });
@@ -40,16 +43,18 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                return res.json({ "id": user._id, "user": user.username, "message": info.message });
+                return res.json({ "id": user._id, "user": user.username, "message": info.message, "authenticated": req.isAuthenticated()});
             });
         })(req, res, next);
     });
 
     // Logout, req.logout is from passport, closes the sesssion
-    app.get("/logout", (req, res) => {
-            req.logout();
-            res.redirect("/");
-        });
+    app.post("/logout", (req, res) => {
+            
+        res.json({ "message": req.user.username + " successfully logged out." });
+        req.logout();
+
+    });
     //app.get("/chat", isLoggedIn, (req, res) => {
     //});
     // Check to see if the user is authenticated

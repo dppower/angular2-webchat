@@ -12,6 +12,7 @@ export class LoginComponent {
     loginText: {} = { title: "Login", text: "Need an account?" };
     
     responseMessage: string = null;
+    cookies: string;
 
     username: string;
     password: string;
@@ -25,6 +26,14 @@ export class LoginComponent {
         this.loginService_.postCredentials(this.username, this.password, this.isLogin)
             .subscribe(data => { this.responseMessage = data.message; });
 
+    };
+
+    showCookie() {
+        this.cookies = document.cookie;
+    };
+
+    logout() {
+        this.loginService_.Logout().subscribe(data => { this.responseMessage = data.message; });
     };
 
     toggleLogin() {

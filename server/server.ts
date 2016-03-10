@@ -4,7 +4,7 @@ import bodyParser = require("body-parser");
 import cookieParser = require("cookie-parser");
 import * as session from "express-session";
 import {Observable} from "rxjs/Rx";
-import {mongoose, dbConfig} from "./db-config";
+import {sessionConn} from "./db-config";
 import * as passport from "passport";
 import {passportConfig} from "./passport-config";
 import path = require("path");
@@ -19,12 +19,14 @@ app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "/../public")));
 app.use(express.static(path.join(__dirname, "/../node_modules")));
 
-mongoose.connect(dbConfig.url);
+
 passportConfig(passport);
 
 app.use(cookieParser());
 
-app.use(session({ secret: "myBigSecret", resave: false, saveUninitialized: false }));
+const mongoStore = require("connect-mongo")(session);
+
+app.use(session({ secret: "myBigSecret", cookie: { maxAge: null, httpOnly: false }, store: new mongoStore({ mongooseConnection: sessionConn}), resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -43,12 +45,15 @@ server.listen(app.get("port"), function () {
 
 var users = [];
 
+
 wss.on("connection", function (socket) {
+    
     console.log("A user has connected");
     var clientId = socket.id.slice(2);
     var username = "";
 
     socket.on("login", function (name) {
+        mongoStore
         username = name;
         var newUser = { name: username, socket: clientId };
         users.push(newUser);

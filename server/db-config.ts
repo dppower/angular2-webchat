@@ -1,12 +1,18 @@
 "use strict";
-import {Mongoose, Schema, Document} from "mongoose";
+import {Mongoose, Schema, Document, Connection} from "mongoose";
 import * as bcrypt from "bcryptjs";
 
-export var dbConfig = {
+var dbConfig = {
     url: "mongodb://localhost:27017/users"
 }
 
-export var mongoose: Mongoose = new Mongoose();
+var ssConfig = {
+    url: "mongodb://localhost:27017/sessions"
+}
+
+var usersConnection: Connection = new Mongoose().createConnection(dbConfig.url);
+
+export var sessionConnection: Connection = new Mongoose().createConnection(ssConfig.url);
 
 interface IUser {
     username: string;
@@ -23,7 +29,7 @@ var userSchema = new Schema({
     salt: String
 });
 
-export var userModel = mongoose.model<IUserModel>("User", userSchema);
+export var userModel = usersConnection.model<IUserModel>("User", userSchema);
 
 export class User {
 
