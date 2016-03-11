@@ -21,12 +21,7 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                //console.log(req.session.passport.user);
-                //console.log(req.user);
-                //console.log("session.id: " + req.session.id);
-                //console.log("sessionID: " + req.sessionID);
-                //console.log("session cookie: " + JSON.stringify(req.session.cookie));
-                return res.json({ "id": user._id, "user": user.username, "message": info.message, "authenticated": req.isAuthenticated() });
+                return res.json({ "user": user.username, "message": info.message, "authenticated": req.isAuthenticated() });
             });
         })(req, res, next);
     });
@@ -43,23 +38,23 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                return res.json({ "id": user._id, "user": user.username, "message": info.message, "authenticated": req.isAuthenticated()});
+                return res.json({ "user": user.username, "message": info.message, "authenticated": req.isAuthenticated()});
             });
         })(req, res, next);
     });
-
-    // Logout, req.logout is from passport, closes the sesssion
+    
     app.post("/logout", (req, res) => {
-            
+        res.cookie("connect.sid", "", { expires: new Date() });   
         res.json({ "message": req.user.username + " successfully logged out." });
         req.logout();
-
+        req.session.destroy();
     });
-    //app.get("/chat", isLoggedIn, (req, res) => {
-    //});
-    // Check to see if the user is authenticated
-    //var isLoggedIn = (req, res, next) => {
-    //    if (req.isAutheticated()) { return next(); };
-    //    res.redirect("/");
-    //}
+
+    app.post("/authenticated", (req, res) => {
+        if (req.isAuthenticated())
+        {
+            return res.json({ "authenticated": true });
+        }
+        return res.json({ "authenticated": false });
+    });
 }

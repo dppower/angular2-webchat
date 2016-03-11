@@ -13,6 +13,7 @@
     "routes.ts",
     "db-config.ts",
     "passport-config.ts",
+    "socket-setup.ts",
     "main.d.ts"
   ]
 }

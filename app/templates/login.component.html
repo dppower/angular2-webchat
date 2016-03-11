@@ -10,11 +10,7 @@
             <input type="password" class="form-control" [(ngModel)]="password" placeholder="password">
         </div>
         <div *ngIf="responseMessage">{{responseMessage}}</div>
-        <div *ngIf="errorMessage">{{errorMessage}}</div>
-        <div>Cookie: {{cookies}}</div>
-        <button type="submit" class="btn btn-warning btn-lg">{{isLogin ? loginText.title : registerText.title }}</button>
-        <button type="button" class="btn btn-warning btn-lg" (click)="showCookie()">Show Cookie!</button>
-        <button type="button" class="btn btn-warning btn-lg" (click)="logout()">Logout.</button>
+        <button type="submit" class="btn btn-default btn-lg">{{isLogin ? loginText.title : registerText.title }}</button>
     </form>
     <p></p>
     <p>{{isLogin ? loginText.text : registerText.text }} <span class="fake-link" (click)="toggleLogin()">{{isLogin ? registerText.title : loginText.title }}</span></p>
