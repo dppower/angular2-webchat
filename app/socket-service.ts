@@ -1,35 +1,31 @@
 import {Injectable} from "angular2/core";
-import {Observable, ReplaySubject, Subject} from "rxjs/Rx";
-import {ChatMessage} from "./chat-message";
+import {Observable} from "rxjs/Rx";
+
+interface UserAction { action: string; username: string; };
+interface ChatMessage { username: string; message: string; };
 
 @Injectable()
 export class SocketService {
-    //get socketId() { return this.socket_.id; };
+    
+    chatStream: Observable<ChatMessage>;
+    userList: Observable<UserAction>;
 
-    chatStream: Observable<string>;
-    //userList: Observable<{ name: string, socket: string }>;
-    //userListrp: ReplaySubject<{ name: string, socket: string }>;
-    //userLists: Subject<{ name: string, socket: string }>;
-    //userDisconnected: Observable<string>;
-    //newUser: Observable<{ name: string, socket: string }>;
-
-    constructor() {
-        
-        
-        ////this.userList = Observable.fromEvent(this.socket_, "user-list");
-        //this.userListrp = new ReplaySubject<{ name: string, socket: string }>();
-        //this.userList = new Observable(observer => {
-        //    this.socket_.on("user-list", data => observer.next(data));
-        //    this.socket_.on("list-completed", () => observer.complete());
-        //});
-        //this.userList.subscribe(this.userListrp);
-        //this.userDisconnected = Observable.fromEvent(this.socket_, "user-disconnected");
-        //this.newUser = Observable.fromEvent(this.socket_, "new-user");
-    };
+    constructor() { };
 
     connect() {
-        this.socket_ = io.connect();
+        this.socket_ = io.connect("/chatroom");
+        this.socket_.on("error", (err) => { console.log(err); });
+
         this.chatStream = Observable.fromEvent(this.socket_, "chat");
+
+        let userActionSubject = new Observable<UserAction>(observer => {
+            this.socket_.on("user-action", (action) => observer.next(action));
+        });
+
+        this.userList = new Observable<UserAction>(observer => {
+            this.socket_.on("user-list", data => observer.next(data));
+            this.socket_.on("list-completed", () => observer.complete());
+        }).concat(userActionSubject);
     };
 
     disconnect() {

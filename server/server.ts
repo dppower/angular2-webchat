@@ -39,8 +39,8 @@ passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-import {socketSetup} from "./socket-setup";
-socketSetup(socketio, eSession, passport);
+import {Chatroom} from "./socket-setup";
+new Chatroom(socketio, eSession, passport);
 
 import {routeConfig} from "./routes";
 routeConfig(app, passport);
