@@ -8,14 +8,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="chat-box col-xs-8 col-sm-9" autoScroll>
-            <p *ngFor="#msg of messages | async">{{msg}}</p>
-        </div>
-        <div class="user-list col-xs-4 col-sm-3">
-            <p *ngFor="#user of userslist">{{user}}</p>
-        </div>
+        <chat-display></chat-display>
+        <user-list></user-list>
     </div>
 </div>
 <div class="footer">
-    <chat-input (addNewMessage)="emitMessage($event)"></chat-input>
+    <chat-input></chat-input>
 </div>

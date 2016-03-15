@@ -1,5 +1,5 @@
 import {Component} from "angular2/core";
-import {LoginService} from "./login.service";
+import {HttpService} from "./http.service";
 import {Router} from "angular2/router";
 
 @Component({
@@ -17,11 +17,11 @@ export class LoginComponent {
 
     isLogin: boolean = true;
 
-    constructor(private loginService_: LoginService, private router_: Router) { };
+    constructor(private httpService_: HttpService, private router_: Router) { };
     
     onSubmit() {
         if (!this.username || !this.password) return;
-        this.loginService_.postCredentials(this.username, this.password, this.isLogin)
+        this.httpService_.postCredentials(this.username, this.password, this.isLogin)
             .subscribe(data => {
                 this.responseMessage = data.message;
                 if (data.authenticated == true)

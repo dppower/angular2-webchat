@@ -1,13 +1,28 @@
-import {Component, Input} from "angular2/core";
+import {Component, OnInit} from "angular2/core";
+import {Observable} from "rxjs/Rx";
+import {SocketService} from "./socket.service";
 
 @Component({
     selector: "user-list",
     template: `
-         <p>{{username}}</p>
+         <div class="user-list col-xs-4 col-sm-3">
+            <p *ngFor="#user of userslist">{{user}}</p>
+        </div>
        `
 })
-export class UserList {
+export class UserList implements OnInit {
 
-    @Input() username: string;
+    userslist: string[] = [];
 
+    constructor(private socketService_: SocketService) { };
+
+    ngOnInit() {
+        this.socketService_.userList$.subscribe((userAction) => {
+            if (userAction.action == "add") {
+                this.userslist.push(userAction.username);
+            } else if (userAction.action == "remove") {
+                this.userslist = this.userslist.filter(username => username != userAction.username);
+            }
+        });
+    };
 }

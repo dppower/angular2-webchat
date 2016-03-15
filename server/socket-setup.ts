@@ -12,7 +12,7 @@ export class Chatroom {
     session: express.RequestHandler;
     passport: any;
 
-    userActionStream: Subject<UserAction>;
+    userActionStream: Subject<UserAction> = new Subject();;
 
     userList: UserList[] = [];
      
@@ -54,7 +54,7 @@ export class Chatroom {
         });
 
         socket.on("chat", (chat) => {
-            let chatmessage: ChatMessage = { username, message: chat};
+            let chatmessage: ChatMessage = { username, message: chat.message };
             socket.emit("chat", chatmessage);
             socket.broadcast.emit("chat", chatmessage);
         });
@@ -85,7 +85,6 @@ export class Chatroom {
         });
 
         this.chatns.on("connection", this.onConnection);
-        this.userActionStream = new Subject();
         this.userActionStream.subscribe(this.onNextUserAction);
     };
 };

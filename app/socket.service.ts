@@ -7,8 +7,8 @@ interface ChatMessage { username: string; message: string; };
 @Injectable()
 export class SocketService {
     
-    chatStream: Observable<ChatMessage>;
-    userList: Observable<UserAction>;
+    chat$: Observable<ChatMessage>;
+    userList$: Observable<UserAction>;
 
     constructor() { };
 
@@ -16,16 +16,16 @@ export class SocketService {
         this.socket_ = io.connect("/chatroom");
         this.socket_.on("error", (err) => { console.log(err); });
 
-        this.chatStream = Observable.fromEvent(this.socket_, "chat");
+        this.chat$ = Observable.fromEvent(this.socket_, "chat");
 
-        let userActionSubject = new Observable<UserAction>(observer => {
+        let userAction$ = new Observable<UserAction>(observer => {
             this.socket_.on("user-action", (action) => observer.next(action));
         });
 
-        this.userList = new Observable<UserAction>(observer => {
+        this.userList$ = new Observable<UserAction>(observer => {
             this.socket_.on("user-list", data => observer.next(data));
             this.socket_.on("list-completed", () => observer.complete());
-        }).concat(userActionSubject);
+        }).concat(userAction$);
     };
 
     disconnect() {

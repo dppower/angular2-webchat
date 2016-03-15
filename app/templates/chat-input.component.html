@@ -1,0 +1,11 @@
+<div class="row">
+    <form *ngIf="active" (ngSubmit)="sendMessage()" #thisForm="ngForm" autocomplete="off" novalidate>
+        <div class="col-xs-6 col-sm-8">
+            <input type="text" id="message-box" class="form-control input-lg" [(ngModel)]="message" required ngControl="chatMessage" placeholder="Enter a new message..." repeatFocus>
+        </div>
+        <div class="col-xs-3 col-sm-2">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Send</button>
+        </div>
+        <logout></logout>
+    </form>
+</div>

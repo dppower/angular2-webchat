@@ -1,10 +1,10 @@
-import {Directive, ElementRef, OnDestroy} from "angular2/core";
+import {Directive, ElementRef, OnDestroy, OnInit} from "angular2/core";
 import {RefocusEvents} from "./refocus-event.service";
 
 @Directive({
     selector: "[repeatFocus]",
 })
-export class RepeatFocus implements OnDestroy {
+export class RepeatFocus implements OnDestroy, OnInit {
 
     subscription: any;
 
@@ -12,6 +12,10 @@ export class RepeatFocus implements OnDestroy {
         this.subscription = this.eventEmitter.subscribe((data) => this.focus(data));
     }
     
+    ngOnInit() {
+        this.focus("initial-focus");
+    }
+
     focus(event) {
         this.elem.nativeElement.focus();
     }

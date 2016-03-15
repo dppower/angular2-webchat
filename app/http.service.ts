@@ -3,7 +3,7 @@ import {Http, Response, Headers, RequestOptions} from "angular2/http";
 import {Observable} from "rxjs/Rx";
 
 @Injectable()
-export class LoginService {
+export class HttpService {
     constructor(private http_: Http) { };
     
     private registerUrl = "/register";
@@ -12,32 +12,24 @@ export class LoginService {
     private authenticatedUrl = "/authenticated";
 
     postCredentials(username: string, password: string, isLogin: boolean) {
-        let postBody = JSON.stringify({ username, password });
-        let headers = new Headers({ "Content-Type": "application/json" });
-        let options = new RequestOptions({ headers: headers });
         let url = isLogin ? this.loginUrl : this.registerUrl;
 
-        return this.http_.post(url, postBody, options)
-            .map(res => res.json())
-            .do(data => console.log(data))
-            .catch(this.handleErrors);
+        return this.httpPost({username, password}, url);
     };
 
     logout() {
-        let postBody = JSON.stringify({});
-        let headers = new Headers({ "Content-Type": "application/json" });
-        let options = new RequestOptions({ headers: headers });
-        return this.http_.post(this.logoutUrl, postBody, options)
-            .map(res => res.json())
-            .do(data => console.log(data))
-            .catch(this.handleErrors);
+        return this.httpPost({}, this.logoutUrl);
     };
    
     isAuthenticated() {
-        let postBody = JSON.stringify({});
+        return this.httpPost({}, this.authenticatedUrl);
+    }
+
+    private httpPost(body: Object, url: string) {
+        let postBody = JSON.stringify(body);
         let headers = new Headers({ "Content-Type": "application/json" });
         let options = new RequestOptions({ headers: headers });
-        return this.http_.post(this.authenticatedUrl, postBody, options)
+        return this.http_.post(url, postBody, options)
             .map(res => res.json())
             .do(data => console.log(data))
             .catch(this.handleErrors);

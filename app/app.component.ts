@@ -3,7 +3,7 @@ import {Router, RouteConfig, ROUTER_DIRECTIVES} from "angular2/router";
 import {HTTP_PROVIDERS} from "angular2/http";
 import {ChatRoomComponent} from "./chatroom.component";
 import {LoginComponent} from "./login.component";
-import {LoginService} from "./login.service";
+import {HttpService} from "./http.service";
 
 @Component({
     selector: "my-app",
@@ -16,7 +16,7 @@ import {LoginService} from "./login.service";
             </div>
             `,
     directives: [ROUTER_DIRECTIVES],
-    providers: [HTTP_PROVIDERS, LoginService]
+    providers: [HTTP_PROVIDERS, HttpService]
 })
 @RouteConfig([
     { path: "/login", name: "Login", component: LoginComponent},
@@ -24,10 +24,10 @@ import {LoginService} from "./login.service";
 ])
 export class AppComponent implements OnInit{
 
-    constructor(private loginService_: LoginService, private router_: Router) { };
+    constructor(private httpService_: HttpService, private router_: Router) { };
 
     ngOnInit() {
-        this.loginService_.isAuthenticated().subscribe(data => {
+        this.httpService_.isAuthenticated().subscribe(data => {
             if (data.authenticated === true)
             {
                 this.router_.navigate(["Chat"]);
