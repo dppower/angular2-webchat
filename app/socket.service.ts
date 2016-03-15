@@ -8,6 +8,7 @@ interface ChatMessage { username: string; message: string; };
 export class SocketService {
     
     chat$: Observable<ChatMessage>;
+    whisper$: Observable<ChatMessage>;
     userList$: Observable<UserAction>;
 
     constructor() { };
@@ -17,6 +18,7 @@ export class SocketService {
         this.socket_.on("error", (err) => { console.log(err); });
 
         this.chat$ = Observable.fromEvent(this.socket_, "chat");
+        this.whisper$ = Observable.fromEvent(this.socket_, "whisper");
 
         let userAction$ = new Observable<UserAction>(observer => {
             this.socket_.on("user-action", (action) => observer.next(action));

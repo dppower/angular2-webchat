@@ -1,20 +1,21 @@
-import {Component, OnInit} from "angular2/core";
+import {Component, OnInit, Output, EventEmitter} from "angular2/core";
 import {Observable} from "rxjs/Rx";
 import {SocketService} from "./socket.service";
+import {SelectChatTargetEvents} from "./select-chat-target.service";
 
 @Component({
     selector: "user-list",
     template: `
          <div class="user-list col-xs-4 col-sm-3">
-            <p *ngFor="#user of userslist">{{user}}</p>
+            <p *ngFor="#user of userslist" (click)="selectChatTarget(user)">{{user}}</p>
         </div>
        `
 })
 export class UserList implements OnInit {
+    
+    userslist: string[] = ["Everyone"];
 
-    userslist: string[] = [];
-
-    constructor(private socketService_: SocketService) { };
+    constructor(private socketService_: SocketService, private chatTargetEvent: SelectChatTargetEvents) { };
 
     ngOnInit() {
         this.socketService_.userList$.subscribe((userAction) => {
@@ -25,4 +26,9 @@ export class UserList implements OnInit {
             }
         });
     };
+
+    selectChatTarget(user: string) {
+        console.log("new user selected: " + user);
+        this.chatTargetEvent.emit(user);
+    }
 }

@@ -24,8 +24,14 @@ export class ChatDisplay implements OnInit {
     constructor(private scrollEvent: ScrollEvents, private socketService_: SocketService) { };
 
     ngOnInit() {
-        this.messages = this.socketService_.chat$
-            .map(chat => Array(chat.username + ": " + chat.message))
+        let whispers = this.socketService_.whisper$
+            .map(chat => "[" + chat.username + "]: " + chat.message);
+
+        let chats = this.socketService_.chat$
+            .map(chat => chat.username + ": " + chat.message);
+
+        this.messages = chats.merge(whispers)
+            .map(message => Array(message))
             .scan<string[]>((i, j) => i.concat(j));
 
         this.messages.subscribe(message => this.scrollEvent.emit("scroll"));

@@ -2,7 +2,7 @@
 import {Observable, Subject} from "rxjs/Rx";
 import * as express from "express";
 
-interface UserList { username: string; socketid: string; };
+interface UserSocket { username: string; socketids: string[]; };
 interface UserAction { username: string; action: string; };
 interface ChatMessage { username: string; message: string; };
 
@@ -14,7 +14,7 @@ export class Chatroom {
 
     userActionStream: Subject<UserAction> = new Subject();;
 
-    userList: UserList[] = [];
+    userList: UserSocket[] = [];
      
     getUser = (userId: string) => {
         return new Promise((resolve, reject) => {
@@ -30,33 +30,71 @@ export class Chatroom {
         console.log("A user has connected");
         console.log("Session id: " + socket.request.sessionID);
 
-        let socketid: string = socket.id;
-        const username: string = socket.request.username;
-        let user: UserList = { username, socketid };
+        var socketid: string = socket.id;
+        console.log("This initial socket id: " + socketid);
+        var username: string = socket.request.username;
 
-        let userListStream = Observable.fromArray<UserAction>(this.userList.map(userlist => {
-            return { action: "add", username: userlist.username };
+        let userList$ = Observable.fromArray<UserAction>(this.userList.map(user => {
+            return { action: "add", username: user.username };
         }));
 
-        userListStream.subscribe(
+        userList$.subscribe(
             user => { socket.emit("user-list", user); },
             err => { console.log(err); },
             () => { socket.emit("list-completed"); }
         );
 
-        this.userList.push(user);
-        this.userActionStream.next({ username: username, action: "add" });
+        var existingUserIndex = this.userList.findIndex((x) => { return x.username == username; });
+        if (existingUserIndex > -1) {
+            this.userList[existingUserIndex].socketids.push(socketid);
+        } else {
+            let user: UserSocket = { username, socketids: [socketid] };
+            this.userList.push(user);
+            this.userActionStream.next({ username: user.username, action: "add" });
+        }
 
         socket.on("disconnect", () => {
             console.log("A user has disconnected");
-            this.userList.filter(user => user.username != username);
-            this.userActionStream.next({ username: username, action: "remove" });
+            var i = this.userList.findIndex(x => x.username == username);
+            if (i > -1) {
+                var j = this.userList[i].socketids.findIndex(x => x == socketid);
+                this.userList[i].socketids.splice(j, 1);
+                
+                if (this.userList[i].socketids.length == 0) {
+                    this.userList.splice(i, 1);
+                    this.userActionStream.next({ username: username, action: "remove" });
+                }
+            }
         });
 
         socket.on("chat", (chat) => {
             let chatmessage: ChatMessage = { username, message: chat.message };
+            
             socket.emit("chat", chatmessage);
             socket.broadcast.emit("chat", chatmessage);
+        });
+
+        socket.on("whisper", (chat) => {
+            let target = this.userList.find((x, i, arr) => { return x.username == chat.target; });
+            let self = this.userList.find((x, i, arr) => { return x.username == username; });
+            let messageToTarget: ChatMessage = { username: "From: " + username, message: chat.message };
+            let messageToSelf: ChatMessage = { username: "To " + chat.target, message: chat.message };
+
+            var userSockets: string[] = this.userList.filter(user => user.username == username)
+                .map(user => user.socketids)
+                .reduce((p, n) => p.concat(n), [])
+                .filter(id => id != socketid);
+            userSockets.forEach(socketId => socket.to(socketId).emit("whisper", messageToSelf));
+            
+            socket.emit("whisper", messageToSelf);
+            //self.socketids.forEach(socketId => {
+            //    console.log("Self socket id: " + socketId);
+            //    socket.to(socketId).emit("whisper", messageToSelf);
+            //});
+
+            target.socketids.forEach(socketId => {
+                socket.to(socketId).emit("whisper", messageToTarget);
+            });
         });
     };
 
