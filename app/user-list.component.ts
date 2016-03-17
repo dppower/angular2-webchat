@@ -1,7 +1,8 @@
 import {Component, OnInit, Output, EventEmitter} from "angular2/core";
+import {NgClass} from "angular2/common";
 import {Observable} from "rxjs/Rx";
 import {SocketService} from "./socket.service";
-import {SelectChatTargetEvents} from "./select-chat-target.service";
+import {Event$Service} from "./event$.service";
 
 @Component({
     selector: "user-list",
@@ -15,7 +16,9 @@ export class UserList implements OnInit {
     
     userslist: string[] = ["Everyone"];
 
-    constructor(private socketService_: SocketService, private chatTargetEvent: SelectChatTargetEvents) { };
+    constructor(private socketService_: SocketService, private events_: Event$Service) {
+        this.events_.create("select-chat-target");
+    };
 
     ngOnInit() {
         this.socketService_.userList$.subscribe((userAction) => {
@@ -28,7 +31,6 @@ export class UserList implements OnInit {
     };
 
     selectChatTarget(user: string) {
-        console.log("new user selected: " + user);
-        this.chatTargetEvent.emit(user);
+        this.events_.emit("select-chat-target", user);
     }
 }

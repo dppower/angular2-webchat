@@ -1,50 +1,40 @@
 import {Component, Output, EventEmitter} from "angular2/core";
 import {RepeatFocus} from "./repeat-focus.directive";
-import {RefocusEvents} from "./refocus-event.service";
 import {LogoutComponent} from "./logout.component";
 import {SocketService} from "./socket.service";
-import {SelectChatTargetEvents} from "./select-chat-target.service";
+import {Event$Service} from "./event$.service";
 
 @Component({
     selector: "chat-input",
     templateUrl: "app/templates/chat-input.component.html",
-    directives: [RepeatFocus, LogoutComponent],
-    providers: [RefocusEvents]
+    directives: [RepeatFocus, LogoutComponent]
 })
 export class ChatInput {
     message: string;
     chatTarget: string = "Everyone";
     active: boolean = true;
 
-    constructor(
-        private refocusEmitter: RefocusEvents,
-        private socketService: SocketService,
-        private chatTargetEvent: SelectChatTargetEvents
-        ) {
-        this.chatTargetEvent.subscribe(this.setChatTarget);
+    constructor(private socketService_: SocketService, private events_: Event$Service) {
+        this.events_.create("refocus");
+        this.events_.subscribe("select-chat-target", this.setChatTarget);
     };
 
     setChatTarget = (target: string) => {
-        console.log("Chat input received a new target: " + target);
         this.chatTarget = target;
-        console.log("Chat target is now: " + this.chatTarget);
     };
 
     sendMessage() {
         if (this.message == "") {
             return;
         }
-        console.log("While sending message Chat target is now: " + this.chatTarget);
         if (this.chatTarget == "Everyone") {
-            console.log("Emiting chat to Everyone " + JSON.stringify({ message: this.message }));
-            this.socketService.emit("chat", { message: this.message });
+            this.socketService_.emit("chat", { message: this.message });
         } else {
-            console.log("Emiting whisper to: " + JSON.stringify({ target: this.chatTarget, message: this.message }));
-            this.socketService.emit("whisper", { target: this.chatTarget, message: this.message });
+            this.socketService_.emit("whisper", { target: this.chatTarget, message: this.message });
         }
         this.message = "";
         //this.active = false;
         //setTimeout(() => this.active = true, 0);
-        this.refocusEmitter.emit("refocus");
+        this.events_.emit("refocus", "focus");
     };
 }

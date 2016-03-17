@@ -1,39 +1,45 @@
-import {Component, Input, ChangeDetectionStrategy, OnInit} from "angular2/core";
-import {AsyncPipe} from "angular2/common";
+import {Component, ChangeDetectionStrategy, OnInit} from "angular2/core";
+import {AsyncPipe, NgClass} from "angular2/common";
 import {Observable} from "rxjs/Rx";
 import {AutoScroll} from "./auto-scroll.directive";
 import {SocketService} from "./socket.service";
-import {ScrollEvents} from "./scroll-event.service";
+import {Event$Service} from "./event$.service";
+
+type ChatType = { message: string, type: string };
 
 @Component({
     selector: "chat-display",
     template: `
          <div class="chat-box col-xs-8 col-sm-9" autoScroll>
-            <p *ngFor="#msg of messages | async">{{msg}}</p>
+            <p *ngFor="#msg of messages | async" [ngClass]="msg.type">{{msg.message}}</p>
         </div>
        `,
-    directives: [AutoScroll],
-    providers: [ScrollEvents],
+    styles: [`.whisper {
+            color: rosybrown;
+        }`],
+    directives: [AutoScroll, NgClass],
     pipes: [AsyncPipe],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatDisplay implements OnInit {
 
-    messages: Observable<string[]>;
+    messages: Observable<ChatType[]>;
 
-    constructor(private scrollEvent: ScrollEvents, private socketService_: SocketService) { };
+    constructor(private events_: Event$Service, private socketService_: SocketService) {
+        this.events_.create("auto-scroll");
+    };
 
     ngOnInit() {
-        let whispers = this.socketService_.whisper$
-            .map(chat => "[" + chat.username + "]: " + chat.message);
+        let whispers: Observable<ChatType> = this.socketService_.whisper$
+            .map<ChatType>(chat => { return { message: "[" + chat.username + "]: " + chat.message, type: "whisper" } });
 
-        let chats = this.socketService_.chat$
-            .map(chat => chat.username + ": " + chat.message);
+        let chats: Observable<ChatType> = this.socketService_.chat$
+            .map<ChatType>(chat => { return { message: chat.username + ": " + chat.message, type: "chat" } });
 
         this.messages = chats.merge(whispers)
-            .map(message => Array(message))
-            .scan<string[]>((i, j) => i.concat(j));
-
-        this.messages.subscribe(message => this.scrollEvent.emit("scroll"));
+            .map<ChatType[]>((message: ChatType) => Array(message))
+            .scan<ChatType[]>((i, j) => i.concat(j));
+        
+        this.messages.subscribe(message => this.events_.emit("auto-scroll", "scroll"));
     };
 }
