@@ -4,7 +4,7 @@ import * as express from "express";
 
 interface UserSocket { username: string; socketids: string[]; };
 interface UserAction { username: string; action: string; };
-interface ChatMessage { username: string; message: string; };
+interface ChatMessage { username: string; message: string; direction: string; type: string};
 
 export class Chatroom {
 
@@ -68,17 +68,18 @@ export class Chatroom {
         });
 
         socket.on("chat", (chat) => {
-            let chatmessage: ChatMessage = { username, message: chat.message };
+            let messageToTarget: ChatMessage = { username, message: chat.message, direction: "From", type: "chat"};
+            let messageToSelf: ChatMessage = { username, message: chat.message, direction: "To", type: "chat"};
             
-            socket.emit("chat", chatmessage);
-            socket.broadcast.emit("chat", chatmessage);
+            socket.emit("chat", messageToSelf);
+            socket.broadcast.emit("chat", messageToTarget);
         });
 
         socket.on("whisper", (chat) => {
             let target = this.userList.find((x, i, arr) => { return x.username == chat.target; });
             let self = this.userList.find((x, i, arr) => { return x.username == username; });
-            let messageToTarget: ChatMessage = { username: "From: " + username, message: chat.message };
-            let messageToSelf: ChatMessage = { username: "To " + chat.target, message: chat.message };
+            let messageToTarget: ChatMessage = { username: username, message: chat.message, direction: "From", type: "whisper" };
+            let messageToSelf: ChatMessage = { username: chat.target, message: chat.message, direction: "To", type: "whisper" };
 
             var userSockets: string[] = this.userList.filter(user => user.username == username)
                 .map(user => user.socketids)
@@ -87,10 +88,6 @@ export class Chatroom {
             userSockets.forEach(socketId => socket.to(socketId).emit("whisper", messageToSelf));
             
             socket.emit("whisper", messageToSelf);
-            //self.socketids.forEach(socketId => {
-            //    console.log("Self socket id: " + socketId);
-            //    socket.to(socketId).emit("whisper", messageToSelf);
-            //});
 
             target.socketids.forEach(socketId => {
                 socket.to(socketId).emit("whisper", messageToTarget);

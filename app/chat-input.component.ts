@@ -15,7 +15,6 @@ export class ChatInput {
     active: boolean = true;
 
     constructor(private socketService_: SocketService, private events_: Event$Service) {
-        this.events_.create("refocus");
         this.events_.subscribe("select-chat-target", this.setChatTarget);
     };
 
@@ -24,7 +23,7 @@ export class ChatInput {
     };
 
     sendMessage() {
-        if (this.message == "") {
+        if (this.message == "" || this.chatTarget == undefined) {
             return;
         }
         if (this.chatTarget == "Everyone") {
@@ -33,8 +32,7 @@ export class ChatInput {
             this.socketService_.emit("whisper", { target: this.chatTarget, message: this.message });
         }
         this.message = "";
-        //this.active = false;
-        //setTimeout(() => this.active = true, 0);
-        this.events_.emit("refocus", "focus");
+        this.active = false;
+        setTimeout(() => { this.active = true; this.events_.emit("refocus", "focus"); }, 0);
     };
 }

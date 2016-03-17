@@ -10,7 +10,7 @@ export class AutoScroll implements OnDestroy {
     subscription: Subscription<string>;
 
     constructor(private elem: ElementRef, private events_: Event$Service) {
-        // The onNext callback should use 'setTimeout' to delay it until the new message is added.
+        // The onNext callback should use 'setTimeout' to delay it until after the new message is added.
         this.subscription = this.events_.subscribe("auto-scroll", (data) => { setTimeout(() => this.scroll(data)); });
     }
     

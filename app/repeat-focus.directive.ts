@@ -1,6 +1,5 @@
 import {Directive, ElementRef, OnDestroy, OnInit} from "angular2/core";
 import {Event$Service} from "./event$.service";
-//import {RefocusEvents} from "./refocus-event.service";
 
 @Directive({
     selector: "[repeatFocus]",

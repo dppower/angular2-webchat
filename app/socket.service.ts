@@ -2,7 +2,7 @@ import {Injectable} from "angular2/core";
 import {Observable} from "rxjs/Rx";
 
 interface UserAction { action: string; username: string; };
-interface ChatMessage { username: string; message: string; };
+interface ChatMessage { username: string; message: string; direction: string; type: string };
 
 @Injectable()
 export class SocketService {

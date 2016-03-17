@@ -8,16 +8,23 @@ import {Event$Service} from "./event$.service";
     selector: "user-list",
     template: `
          <div class="user-list col-xs-4 col-sm-3">
-            <p *ngFor="#user of userslist" (click)="selectChatTarget(user)">{{user}}</p>
+            <p *ngFor="#user of userslist" (click)="selectChatTarget(user)" [ngClass]="{selected: isSelected(user)}">{{user}}</p>
         </div>
-       `
+       `,
+    styles: [`
+        .selected {
+            background-color: #EEE;
+            color: #369;
+        }
+    `],
+    directives: [NgClass]
 })
 export class UserList implements OnInit {
     
+    selectedUser: string = "Everyone";
     userslist: string[] = ["Everyone"];
 
     constructor(private socketService_: SocketService, private events_: Event$Service) {
-        this.events_.create("select-chat-target");
     };
 
     ngOnInit() {
@@ -30,7 +37,12 @@ export class UserList implements OnInit {
         });
     };
 
+    isSelected(user: string) {
+        return this.selectedUser == user;
+    }
+
     selectChatTarget(user: string) {
+        this.selectedUser = user;
         this.events_.emit("select-chat-target", user);
     }
 }
