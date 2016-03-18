@@ -4,7 +4,7 @@ import * as express from "express";
 
 interface UserSocket { username: string; socketids: string[]; };
 interface UserAction { username: string; action: string; };
-interface ChatMessage { username: string; message: string; direction: string; type: string};
+interface ChatMessage { username: string; message: string; direction: string};
 
 export class Chatroom {
 
@@ -31,7 +31,6 @@ export class Chatroom {
         console.log("Session id: " + socket.request.sessionID);
 
         var socketid: string = socket.id;
-        console.log("This initial socket id: " + socketid);
         var username: string = socket.request.username;
 
         let userList$ = Observable.fromArray<UserAction>(this.userList.map(user => {
@@ -68,18 +67,18 @@ export class Chatroom {
         });
 
         socket.on("chat", (chat) => {
-            let messageToTarget: ChatMessage = { username, message: chat.message, direction: "From", type: "chat"};
-            let messageToSelf: ChatMessage = { username, message: chat.message, direction: "To", type: "chat"};
+            let messageToTarget: ChatMessage = { username, message: chat.message, direction: "From"};
+            let messageToSelf: ChatMessage = { username, message: chat.message, direction: "Self"};
             
             socket.emit("chat", messageToSelf);
             socket.broadcast.emit("chat", messageToTarget);
         });
 
         socket.on("whisper", (chat) => {
-            let target = this.userList.find((x, i, arr) => { return x.username == chat.target; });
-            let self = this.userList.find((x, i, arr) => { return x.username == username; });
-            let messageToTarget: ChatMessage = { username: username, message: chat.message, direction: "From", type: "whisper" };
-            let messageToSelf: ChatMessage = { username: chat.target, message: chat.message, direction: "To", type: "whisper" };
+            let target = this.userList.find((x) => { return x.username == chat.target; });
+            let messageToTarget: ChatMessage = { username: username, message: chat.message, direction: "From"};
+            let selfDirection = (chat.target == username) ? "Self" : "To";
+            let messageToSelf: ChatMessage = { username: chat.target, message: chat.message, direction: selfDirection};
 
             var userSockets: string[] = this.userList.filter(user => user.username == username)
                 .map(user => user.socketids)

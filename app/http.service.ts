@@ -6,6 +6,8 @@ import {Observable} from "rxjs/Rx";
 export class HttpService {
     constructor(private http_: Http) { };
     
+    get username() { return this.username_; };
+
     private registerUrl = "/register";
     private loginUrl = "/login";
     private logoutUrl = "/logout";
@@ -31,11 +33,19 @@ export class HttpService {
         let options = new RequestOptions({ headers: headers });
         return this.http_.post(url, postBody, options)
             .map(res => res.json())
-            .do(data => console.log(data))
+            .do(data => {
+                if (url == this.registerUrl || url == this.loginUrl) {
+                    if (data.authenticated) {
+                        this.username_ = data.user;
+                    }
+                }
+            })
             .catch(this.handleErrors);
     }
 
     private handleErrors(error: Response) {
         return Observable.throw(error.json() || "server error");
     }
+
+    private username_: string;
 }

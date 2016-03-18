@@ -26,6 +26,7 @@ export class LoginComponent {
                 this.responseMessage = data.message;
                 if (data.authenticated == true)
                 {
+                    this.httpService_.username = data.user;
                     this.router_.navigate(["Chat"]);
                 }
             });
