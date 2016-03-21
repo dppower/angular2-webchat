@@ -34,12 +34,12 @@ export class ChatDisplay implements OnInit {
 
     messages: Observable<ChatType[]>;
 
-    constructor(private events_: Event$Service, private socketService_: SocketService, private httpService: HttpService) {
+    constructor(private events_: Event$Service, private socketService_: SocketService, private httpService_: HttpService) {
         this.events_.create("auto-scroll");
     };
 
     ngOnInit() {
-        this.username = this.httpService.username;
+        this.username = this.httpService_.username;
         console.log(this.username);
         let whispers: Observable<ChatType> = this.socketService_.whisper$
             .map<ChatType>(chat => {

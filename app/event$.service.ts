@@ -12,7 +12,7 @@ export class Event$Service {
         this.subjects_.push({ id, subject });
     };
 
-    emit(id: string, data: string) {
+    emit(id: string, data = "next") {
         this.getSubject(id).next(data);
     };
 

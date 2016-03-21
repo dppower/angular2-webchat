@@ -25,6 +25,7 @@ export class UserList implements OnInit {
     userslist: string[] = ["Everyone"];
 
     constructor(private socketService_: SocketService, private events_: Event$Service) {
+        this.events_.subscribe("socket-disconnect", (data) => { console.log("Socket disconnect event emitted."); this.userslist = ["Everyone"]; } );
     };
 
     ngOnInit() {

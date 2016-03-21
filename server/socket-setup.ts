@@ -1,10 +1,11 @@
 "use strict"
-import {Observable, Subject} from "rxjs/Rx";
+import {Observable, Subject, ReplaySubject} from "rxjs/Rx";
 import * as express from "express";
 
 interface UserSocket { username: string; socketids: string[]; };
 interface UserAction { username: string; action: string; };
-interface ChatMessage { username: string; message: string; direction: string};
+interface ChatMessage { username: string; message: string; direction: string };
+interface ChatSubject { sender: string; recipient: string; message: string };
 
 export class Chatroom {
 
@@ -12,7 +13,8 @@ export class Chatroom {
     session: express.RequestHandler;
     passport: any;
 
-    userActionStream: Subject<UserAction> = new Subject();;
+    userActionStream: Subject<UserAction> = new Subject();
+    chatBuffer: ReplaySubject<ChatSubject> = new ReplaySubject(20);
 
     userList: UserSocket[] = [];
      
@@ -32,7 +34,7 @@ export class Chatroom {
 
         var socketid: string = socket.id;
         var username: string = socket.request.username;
-
+        
         let userList$ = Observable.fromArray<UserAction>(this.userList.map(user => {
             return { action: "add", username: user.username };
         }));
@@ -42,6 +44,8 @@ export class Chatroom {
             err => { console.log(err); },
             () => { socket.emit("list-completed"); }
         );
+
+        this.chatBuffer.subscribe(chat => console.log(JSON.stringify(chat)));
 
         var existingUserIndex = this.userList.findIndex((x) => { return x.username == username; });
         if (existingUserIndex > -1) {
@@ -70,6 +74,7 @@ export class Chatroom {
             let messageToTarget: ChatMessage = { username, message: chat.message, direction: "From"};
             let messageToSelf: ChatMessage = { username, message: chat.message, direction: "Self"};
             
+            this.chatBuffer.next({ sender: username, recipient: "Everyone", message: chat.message });
             socket.emit("chat", messageToSelf);
             socket.broadcast.emit("chat", messageToTarget);
         });
@@ -79,6 +84,8 @@ export class Chatroom {
             let messageToTarget: ChatMessage = { username: username, message: chat.message, direction: "From"};
             let selfDirection = (chat.target == username) ? "Self" : "To";
             let messageToSelf: ChatMessage = { username: chat.target, message: chat.message, direction: selfDirection};
+
+            this.chatBuffer.next({ sender: username, recipient: chat.target, message: chat.message });
 
             var userSockets: string[] = this.userList.filter(user => user.username == username)
                 .map(user => user.socketids)

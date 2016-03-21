@@ -27,19 +27,19 @@ export class HttpService {
         return this.httpPost({}, this.authenticatedUrl);
     }
 
+    getUsername = (data) => {
+        if (data.authenticated) {
+            this.username_ = data.username;
+        }
+    }
+
     private httpPost(body: Object, url: string) {
         let postBody = JSON.stringify(body);
         let headers = new Headers({ "Content-Type": "application/json" });
         let options = new RequestOptions({ headers: headers });
         return this.http_.post(url, postBody, options)
             .map(res => res.json())
-            .do(data => {
-                if (url == this.registerUrl || url == this.loginUrl) {
-                    if (data.authenticated) {
-                        this.username_ = data.user;
-                    }
-                }
-            })
+            .do(this.getUsername)
             .catch(this.handleErrors);
     }
 

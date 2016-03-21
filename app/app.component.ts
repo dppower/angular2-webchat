@@ -1,9 +1,9 @@
 import {Component, OnInit} from "angular2/core";
 import {Router, RouteConfig, ROUTER_DIRECTIVES} from "angular2/router";
-import {HTTP_PROVIDERS} from "angular2/http";
 import {ChatRoomComponent} from "./chatroom.component";
 import {LoginComponent} from "./login.component";
 import {HttpService} from "./http.service";
+import {Event$Service} from "./event$.service";
 
 @Component({
     selector: "my-app",
@@ -16,7 +16,7 @@ import {HttpService} from "./http.service";
             </div>
             `,
     directives: [ROUTER_DIRECTIVES],
-    providers: [HTTP_PROVIDERS, HttpService]
+    providers: [HttpService, Event$Service]
 })
 @RouteConfig([
     { path: "/login", name: "Login", component: LoginComponent},
@@ -28,12 +28,10 @@ export class AppComponent implements OnInit{
 
     ngOnInit() {
         this.httpService_.isAuthenticated().subscribe(data => {
-            if (data.authenticated === true)
-            {
+            if (data.authenticated == true) {
                 this.router_.navigate(["Chat"]);
             }
-            else
-            {
+            else {
                 this.router_.navigate(["Login"]);
             }
         });

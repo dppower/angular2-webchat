@@ -21,7 +21,7 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                return res.json({ "user": user.username, "message": info.message, "authenticated": req.isAuthenticated() });
+                return res.json({ "username": user.username, "message": info.message, "authenticated": req.isAuthenticated() });
             });
         })(req, res, next);
     });
@@ -38,7 +38,7 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                return res.json({ "user": user.username, "message": info.message, "authenticated": req.isAuthenticated()});
+                return res.json({ "username": user.username, "message": info.message, "authenticated": req.isAuthenticated()});
             });
         })(req, res, next);
     });
@@ -53,7 +53,7 @@ export var routeConfig = function (app, passport: Passport) {
     app.post("/authenticated", (req, res) => {
         if (req.isAuthenticated())
         {
-            return res.json({ "authenticated": true });
+            return res.json({ "authenticated": true, "username": req.user.username });
         }
         return res.json({ "authenticated": false });
     });
