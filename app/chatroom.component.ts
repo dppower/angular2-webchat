@@ -6,7 +6,7 @@ import {SocketService} from "./socket.service";
 import {Event$Service} from "./event$.service";
 import {Router, CanActivate} from "angular2/router";
 import {HttpService} from "./http.service";
-import {getAppInjector} from "./injector-ref";
+import {getAppInjector} from "./app-injector-ref";
 
 @Component({
     templateUrl: "app/templates/chatroom.component.html",
@@ -14,10 +14,10 @@ import {getAppInjector} from "./injector-ref";
     providers: [SocketService]
 })
 @CanActivate((next, prev) => {
-    let injector = getAppInjector().resolveAndCreateChild([HttpService]);
+    let injector = getAppInjector();
     let httpService: HttpService = injector.get(HttpService);
     let router: Router = injector.get(Router);
-
+    
     return httpService.isAuthenticated().toPromise().then((data) => {
         let authenticated = data.authenticated ? true : false;
         if (!authenticated) {

@@ -1,9 +1,10 @@
-import {Component, OnInit} from "angular2/core";
+import {Component, OnInit, Injector} from "angular2/core";
 import {Router, RouteConfig, ROUTER_DIRECTIVES} from "angular2/router";
 import {ChatRoomComponent} from "./chatroom.component";
 import {LoginComponent} from "./login.component";
 import {HttpService} from "./http.service";
 import {Event$Service} from "./event$.service";
+import {getAppInjector} from "./app-injector-ref";
 
 @Component({
     selector: "my-app",
@@ -24,7 +25,9 @@ import {Event$Service} from "./event$.service";
 ])
 export class AppComponent implements OnInit{
 
-    constructor(private httpService_: HttpService, private router_: Router) { };
+    constructor(private httpService_: HttpService, private router_: Router, private injector_: Injector) {
+        getAppInjector(injector_);
+    };
 
     ngOnInit() {
         this.httpService_.isAuthenticated().subscribe(data => {
