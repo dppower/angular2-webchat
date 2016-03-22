@@ -25,8 +25,7 @@ export var passportConfig = function (passport) {
             }
              
             var newUser = new User({ username: username, password: password });
-            newUser.saveDocument((err, user) => {
-                if (err) return done(err, null, { message: "The new user could not be saved to db." });
+            newUser.saveNewUser().then(user => {
                 return done(null, user, { message: "A new user was successfully registered." });
             });
         });

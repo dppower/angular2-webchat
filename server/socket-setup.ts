@@ -19,10 +19,10 @@ export class Chatroom {
     userList: UserSocket[] = [];
      
     getUser = (userId: string) => {
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             this.passport.deserializeUser(userId, (err, user) => {
+                if (err !== null) return reject(err);
                 resolve(user);
-                reject(err);
             });
         });
     };
@@ -114,14 +114,19 @@ export class Chatroom {
         
         this.chatns.use(async (socket, next) => {
             if (socket.request.session.passport.user) {
-                await this.getUser(socket.request.session.passport.user).then((user: any) => {
+                try {
+                    let user = await this.getUser(socket.request.session.passport.user);
                     socket.request.username = user.username;
                     next();
-                }, err => console.log(err));
+                }
+                catch (err) {
+                    console.log(err.message);
+                    next(new Error(err.message));
+                }
             }
             else {
                 // Need to handle these errors with socket.on("error") in client.
-                next(new Error("User's session was not found."));
+                next(new Error("User's session was not authenticated."));
             }
         });
 

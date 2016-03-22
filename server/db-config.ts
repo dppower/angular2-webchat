@@ -35,32 +35,68 @@ export class User {
 
     generateSalt = () => {
         return new Promise<string>((resolve, reject) => {
-            resolve(bcrypt.genSaltSync(10));
+            bcrypt.genSalt(10, (err, salt) => {
+                if (err !== null) return reject(err);
+                resolve(salt);
+            });
         });
     };
 
     generateHash = (password: string, salt: string) => {
         return new Promise<string>((resolve, reject) => {
-            resolve(bcrypt.hashSync(password, salt));
+            bcrypt.hash(password, salt, (err, hash) => {
+                if (err !== null) return reject(err);
+                resolve(hash);
+            });
         });
     };
 
     static checkPasswords = (password: string, hash: string) => {
         return new Promise<boolean>((resolve, reject) => {
-            resolve(bcrypt.compareSync(password, hash));
+            bcrypt.compare(password, hash, (err, success) => {
+                if (err !== null) return reject(err);
+                resolve(success);
+            });
         });
     };
+
     encryptPassword = async () => {
-        this.model_.salt = await this.generateSalt().catch((err: Error) => console.log("salt error: " + err.message));
-        this.model_.password = await this.generateHash(this.model_.password, this.model_.salt).catch((err: Error) => console.log("hash error: " + err.message)); 
+        try {
+            this.model_.salt = await this.generateSalt();
+            this.model_.password = await this.generateHash(this.model_.password, this.model_.salt);
+        }
+        catch (err) {
+            console.log(err.message);
+        }   
     };
 
-    saveDocument = async (onSaveDocument: (err: Error, user: IUserModel) => any) => {
-        await this.encryptPassword().then(() => { this.model_.save(onSaveDocument); });
+    saveDocument = () => {
+        return new Promise<IUserModel>((resolve, reject) => {
+            this.model_.save((err, user: IUserModel) => {
+                if (err !== null) return reject(err);
+                resolve(user);
+            });
+        });   
+    };
+
+    saveNewUser = async () => {
+        try {
+            await this.encryptPassword();
+            let user = await this.saveDocument();
+            return user;
+        }
+        catch (err) {
+            console.log(err.message);
+        }
     };
 
     static isCorrectPassword = async (password: string, user: IUserModel) => {
-        return await User.checkPasswords(password, user.password);
+        try {
+            let isCorrect = await User.checkPasswords(password, user.password);
+            return isCorrect;
+        } catch (err) {
+            console.log(err.message);
+        }
     };
 
     constructor(document: IUser) {
