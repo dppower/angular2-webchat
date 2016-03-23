@@ -1,6 +1,6 @@
 #animated-message {
     color: darkred;
-    transform-origin: bottom left;
+    transform-origin: center left;
     /*transition: transform 0.5s ease-in-out;*/
     animation: bounce 0.2s ease-in-out 1;
 }

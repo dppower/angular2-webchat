@@ -6,7 +6,7 @@ import {SocketService} from "./socket.service";
 @Component({
     selector: "logout",
     template: `
-                <div class="col-xs-3 col-sm-2">
+                <div class="col-xs-2">
                     <button type="button" class="btn btn-primary btn-lg btn-block" (click)="logout()">Logout</button>
                 </div>
         `

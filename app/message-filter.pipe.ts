@@ -25,10 +25,10 @@ export class MessageFilterPipe implements PipeTransform {
 
         } else if (select == username) {
             if (direction) {
-                return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "To" || chat.direction == "Self"));
+                return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "To"));
             }
             else {
-                return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "From" || chat.direction == "Self"));
+                return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "From"));
             }
         }
         else {

@@ -15,10 +15,10 @@ import {getAppInjector} from "./app-injector-ref";
 })
 @CanActivate((next, prev) => {
     let injector = getAppInjector();
-    let httpService: AuthService = injector.get(AuthService);
+    let authService: AuthService = injector.get(AuthService);
     let router: Router = injector.get(Router);
     
-    return httpService.isAuthenticated().toPromise().then((data) => {
+    return authService.isAuthenticated().toPromise().then((data) => {
         let authenticated = data.authenticated ? true : false;
         if (!authenticated) {
             router.navigate(["Login"]);
@@ -27,6 +27,7 @@ import {getAppInjector} from "./app-injector-ref";
     });
 })
 export class ChatRoomComponent implements OnInit {
+    username: string;
     
     selectedTarget: string = "Everyone";
 
@@ -47,7 +48,7 @@ export class ChatRoomComponent implements OnInit {
         this.directionFilter = false;
     };
 
-    constructor(private socketService_: SocketService, private events_: Event$Service) {
+    constructor(private socketService_: SocketService, private events_: Event$Service, private authService_: AuthService) {
         this.events_.create("refocus");
         this.events_.create("select-chat-target");
 
@@ -55,6 +56,7 @@ export class ChatRoomComponent implements OnInit {
     };
 
     ngOnInit() {
+        this.username = this.authService_.username;
         this.socketService_.connect(); 
     }
 

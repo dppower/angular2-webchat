@@ -7,7 +7,7 @@ import {Event$Service} from "./event$.service";
 @Component({
     selector: "user-list",
     template: `
-         <div class="user-list col-xs-4 col-sm-3">
+         <div class="user-list col-xs-3">
             <p *ngFor="#user of userslist" (click)="selectChatTarget(user)" [ngClass]="{selected: isSelected(user)}">{{user}}</p>
         </div>
        `,

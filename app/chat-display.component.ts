@@ -14,7 +14,7 @@ type ChatType = { username: string, message: string, direction: string, type: st
 @Component({
     selector: "chat-display",
     template: `
-         <div class="chat-box col-xs-8 col-sm-9" autoScroll>
+         <div class="chat-box col-xs-9" autoScroll>
             <p *ngFor="#msg of messages | async | messageFilter:username:inSelectedTarget:inTargetFilter:inDirectionFilter" [ngClass]="msg.type">{{msg.message}}</p>
         </div>
        `,

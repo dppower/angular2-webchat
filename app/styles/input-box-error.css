@@ -1,0 +1,38 @@
+#input-row {
+    position: relative;
+    overflow: visible;
+    z-index: 0;
+}
+
+#input-form {
+    position: relative;
+    overflow: visible;
+    z-index: 0;
+}
+
+#input-box {
+    position: relative;
+    overflow: visible;
+    z-index: 0;
+}
+
+#input-box-error {
+    position: absolute;
+    top: -30px;
+    left: 30px;
+    color: darkred;
+    z-index: 10;
+    animation: bounce 0.2s ease-in-out 1;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}

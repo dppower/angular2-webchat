@@ -8,14 +8,7 @@ import {getAppInjector} from "./app-injector-ref";
 
 @Component({
     selector: "my-app",
-    template: `
-            <div class="main-page container-fluid">
-                <div class="title-box">
-                    <h2>Webchat</h2>
-                </div>
-                <router-outlet></router-outlet>
-            </div>
-            `,
+    templateUrl: "app/templates/app.component.html",
     directives: [ROUTER_DIRECTIVES],
     providers: [AuthService, Event$Service]
 })
