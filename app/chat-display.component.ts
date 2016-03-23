@@ -4,7 +4,7 @@ import {Observable} from "rxjs/Rx";
 import {AutoScroll} from "./auto-scroll.directive";
 import {SocketService} from "./socket.service";
 import {Event$Service} from "./event$.service";
-import {HttpService} from "./http.service";
+import {AuthService} from "./auth.service";
 import {MessageFilterPipe} from "./message-filter.pipe";
 import * as _ from "lodash";
 
@@ -34,13 +34,13 @@ export class ChatDisplay implements OnInit {
 
     messages: Observable<ChatType[]>;
 
-    constructor(private events_: Event$Service, private socketService_: SocketService, private httpService_: HttpService) {
+    constructor(private events_: Event$Service, private socketService_: SocketService, private authService_: AuthService) {
         this.events_.create("auto-scroll");
     };
 
     ngOnInit() {
-        this.username = this.httpService_.username;
-        console.log(this.username);
+        this.username = this.authService_.username;
+
         let whispers: Observable<ChatType> = this.socketService_.whisper$
             .map<ChatType>(chat => {
                 return { username: chat.username, message: "[" + chat.direction + ": " + chat.username + "]: " + chat.message, direction: chat.direction, type: "whisper" };
@@ -56,6 +56,6 @@ export class ChatDisplay implements OnInit {
             .map<ChatType[]>((chat: ChatType) => Array(chat))
             .scan<ChatType[]>((i, j) => i.concat(j));
         
-        this.messages.subscribe(message => this.events_.emit("auto-scroll", "scroll"));
+        this.messages.subscribe(message => this.events_.emit("auto-scroll"));
     };
 }

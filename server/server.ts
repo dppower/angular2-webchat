@@ -3,7 +3,7 @@ import morgan = require("morgan");
 import bodyParser = require("body-parser");
 import cookieParser = require("cookie-parser");
 import * as expressSession from "express-session";
-import {sessionConnection} from "./db-config";
+import {sessionConnection} from "./sessions-db";
 import * as passport from "passport";
 import {passportConfig} from "./passport-config";
 import path = require("path");

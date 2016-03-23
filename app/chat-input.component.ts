@@ -33,6 +33,6 @@ export class ChatInput {
         }
         this.message = "";
         this.active = false;
-        setTimeout(() => { this.active = true; this.events_.emit("refocus", "focus"); }, 0);
+        setTimeout(() => { this.active = true; this.events_.emit("refocus"); }, 0);
     };
 }

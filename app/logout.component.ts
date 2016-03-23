@@ -1,5 +1,5 @@
 import {Component} from "angular2/core";
-import {HttpService} from "./http.service";
+import {AuthService} from "./auth.service";
 import {Router} from "angular2/router";
 import {SocketService} from "./socket.service";
 
@@ -14,13 +14,13 @@ import {SocketService} from "./socket.service";
 export class LogoutComponent {
 
     constructor(
-        private httpService_: HttpService,
+        private authService_: AuthService,
         private socketService_: SocketService,
         private router_: Router
     ) { };
 
     logout() {
-        this.httpService_.logout().subscribe();
+        this.authService_.logout().subscribe();
         this.socketService_.disconnect();
         this.router_.navigate(["Login"]);
     };

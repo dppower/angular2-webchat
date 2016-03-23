@@ -1,5 +1,5 @@
 import {Component} from "angular2/core";
-import {HttpService} from "./http.service";
+import {AuthService} from "./auth.service";
 import {Router} from "angular2/router";
 
 @Component({
@@ -10,29 +10,30 @@ export class LoginComponent {
     registerText: {} = { title: "Register", text: "Already have an account?" };
     loginText: {} = { title: "Login", text: "Need an account?" };
     
-    responseMessage: string = null;
+    responseMessage: string = "";
 
     username: string;
     password: string;
 
     isLogin: boolean = true;
 
-    constructor(private httpService_: HttpService, private router_: Router) { };
+    constructor(private authService_: AuthService, private router_: Router) { };
     
     onSubmit() {
         if (!this.username || !this.password) return;
-        this.httpService_.postCredentials(this.username, this.password, this.isLogin)
+        this.authService_.postCredentials(this.username, this.password, this.isLogin)
             .subscribe(data => {
-                this.responseMessage = data.message;
-                if (data.authenticated == true)
-                {
-                    this.httpService_.username = data.user;
+                if (data.authenticated == true) {
                     this.router_.navigate(["Chat"]);
+                }
+                else {
+                    this.responseMessage = data.message;
                 }
             });
     };
 
     toggleLogin() {
+        this.responseMessage = "";
         this.isLogin = !this.isLogin;
     };
 };

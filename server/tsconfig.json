@@ -8,12 +8,13 @@
     "noImplicitAny": false,
     "outDir": "../build"
   },
-  "files": [
-    "server.ts",
-    "routes.ts",
-    "db-config.ts",
-    "passport-config.ts",
-    "socket-setup.ts",
-    "main.d.ts"
-  ]
+    "files": [
+        "sessions-db.ts",
+        "server.ts",
+        "routes.ts",
+        "db-config.ts",
+        "passport-config.ts",
+        "socket-setup.ts",
+        "main.d.ts"
+    ]
 }

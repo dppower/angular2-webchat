@@ -1,54 +1,50 @@
-import {User, userModel, IUserModel} from "./db-config";
+"use strict";
+import {User, IUserDocument} from "./db-config";
 import {Strategy} from "passport-local";
 
 export var passportConfig = function (passport) {
 
-    passport.serializeUser((user: IUserModel, done) => {
+    passport.serializeUser((user: IUserDocument, done) => {
         done(null, user._id);
     });
 
     passport.deserializeUser((id, done) => {
-        userModel.findById(id, (err, user) => {
-            done(err, user);
-        });
+        User.findById(id).then(
+            value => done(null, value),
+            err => done(err, null)
+        );
     });
 
-    passport.use("local-signup", new Strategy((username, password, done) => {
-        userModel.findOne({ username: username }, (err, user) => {
-            if (err)
-            {
-                return done(err, null, { message: "The db search failed." });
-            }
-            if (user)
-            {
+    passport.use("local-signup", new Strategy(async (username, password, done) => {
+        let results = await User.findOneOrCreate(username, password, true);
+
+        if (results.err) {
+            return done(results.err);
+        }
+        else {
+            if (results.user === undefined) {
                 return done(null, null, { message: "This username is already in use." });
             }
-             
-            var newUser = new User({ username: username, password: password });
-            newUser.saveNewUser().then(user => {
-                return done(null, user, { message: "A new user was successfully registered." });
-            });
-        });
+            else {
+                return done(null, results.user);
+            }
+        }
+        
     }));
 
-    passport.use("local-login", new Strategy((username, password, done) => {
-        userModel.findOne({ username: username }, (err, user) => {
-            if (err)
-            {
-                return done(err, null, { message: "The db search failed." });
-            }
-            if (!user)
-            {
+    passport.use("local-login", new Strategy(async (username, password, done) => {
+        let results = await User.findOneOrCreate(username, password, false);
+
+        if (results.err) {
+            return done(results.err);
+        }
+        else {
+            if (results.user === undefined) {
                 return done(null, null, { message: "Invalid username or password!" });
             }
-            
-            User.isCorrectPassword(password, user).then(isCorrect => {
-                if (isCorrect)
-                {
-                    return done(null, user, { message: user.username + " successfully logged in" });
-                }
-                return done(null, null, { message: "Invalid username or password!" });
-            })
-        });
+            else {
+                return done(null, results.user);
+            }
+        }
     }));
 }

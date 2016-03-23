@@ -3,7 +3,7 @@ import {Http, Response, Headers, RequestOptions} from "angular2/http";
 import {Observable} from "rxjs/Rx";
 
 @Injectable()
-export class HttpService {
+export class AuthService {
     constructor(private http_: Http) { };
     
     get username() { return this.username_; };
@@ -27,7 +27,7 @@ export class HttpService {
         return this.httpPost({}, this.authenticatedUrl);
     }
 
-    getUsername = (data) => {
+    setUsername = (data) => {
         if (data.authenticated) {
             this.username_ = data.username;
         }
@@ -39,7 +39,7 @@ export class HttpService {
         let options = new RequestOptions({ headers: headers });
         return this.http_.post(url, postBody, options)
             .map(res => res.json())
-            .do(this.getUsername)
+            .do(this.setUsername)
             .catch(this.handleErrors);
     }
 

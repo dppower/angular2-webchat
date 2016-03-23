@@ -13,7 +13,7 @@ export var routeConfig = function (app, passport: Passport) {
         passport.authenticate("local-signup", function (err, user, info) {
             if (err)
             {
-                return res.json({ "error": err, "message": info.message });
+                return res.json({ "message": err.message });
             }
             if (!user)
             {
@@ -21,7 +21,7 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                return res.json({ "username": user.username, "message": info.message, "authenticated": req.isAuthenticated() });
+                return res.json({ "username": user.username, "authenticated": req.isAuthenticated() });
             });
         })(req, res, next);
     });
@@ -30,7 +30,7 @@ export var routeConfig = function (app, passport: Passport) {
         passport.authenticate("local-login", function (err, user, info) {
             if (err)
             {
-                return res.json({ "error": err, "message": info.message });
+                return res.json({ "message": err.message });
             }
             if (!user)
             {
@@ -38,7 +38,7 @@ export var routeConfig = function (app, passport: Passport) {
             }
             req.login(user, err => {
                 if (err) { return next(err); }
-                return res.json({ "username": user.username, "message": info.message, "authenticated": req.isAuthenticated()});
+                return res.json({ "username": user.username, "authenticated": req.isAuthenticated()});
             });
         })(req, res, next);
     });

@@ -1,11 +1,11 @@
-import {Component, OnInit, Injector, Host} from 'angular2/core';
+import {Component, OnInit, Injector} from 'angular2/core';
 import {ChatDisplay} from './chat-display.component';
 import {ChatInput} from './chat-input.component';
 import {UserList} from "./user-list.component";
 import {SocketService} from "./socket.service";
 import {Event$Service} from "./event$.service";
 import {Router, CanActivate} from "angular2/router";
-import {HttpService} from "./http.service";
+import {AuthService} from "./auth.service";
 import {getAppInjector} from "./app-injector-ref";
 
 @Component({
@@ -15,7 +15,7 @@ import {getAppInjector} from "./app-injector-ref";
 })
 @CanActivate((next, prev) => {
     let injector = getAppInjector();
-    let httpService: HttpService = injector.get(HttpService);
+    let httpService: AuthService = injector.get(AuthService);
     let router: Router = injector.get(Router);
     
     return httpService.isAuthenticated().toPromise().then((data) => {
@@ -47,7 +47,7 @@ export class ChatRoomComponent implements OnInit {
         this.directionFilter = false;
     };
 
-    constructor(private socketService_: SocketService, private events_: Event$Service, private httpService_: HttpService, private router_: Router) {
+    constructor(private socketService_: SocketService, private events_: Event$Service) {
         this.events_.create("refocus");
         this.events_.create("select-chat-target");
 
@@ -59,6 +59,6 @@ export class ChatRoomComponent implements OnInit {
     }
 
     refocusChatInput() {
-        this.events_.emit("refocus", "chatroom");
+        this.events_.emit("refocus");
     }
 }
