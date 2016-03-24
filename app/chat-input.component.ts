@@ -14,7 +14,7 @@ import {AuthService} from "./auth.service";
 export class ChatInput implements OnInit {
     errorMessage: string = "";
     username: string;
-    message: string;
+    message: string = "";
     chatTarget: string = "Everyone";
     active: boolean = true;
 
@@ -33,14 +33,10 @@ export class ChatInput implements OnInit {
     sendMessage() {
         this.errorMessage = "";
         if (this.message == "" || this.chatTarget == undefined) {
-            return;
+            this.errorMessage = "Please enter a valid message!"; 
         }
         else if (this.chatTarget == this.username) {
-            this.errorMessage = "Please select a target not yourself!";
-
-            this.active = false;
-            setTimeout(() => { this.active = true; this.events_.emit("refocus"); }, 0);
-            return;
+            this.errorMessage = "Please select a target not yourself!";  
         }
         else if (this.chatTarget == "Everyone") {
             this.socketService_.emit("chat", { message: this.message });

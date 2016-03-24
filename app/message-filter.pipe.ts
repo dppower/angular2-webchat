@@ -12,33 +12,38 @@ export class MessageFilterPipe implements PipeTransform {
         let target = args[2];
         let direction = args[3];
 
-        if (!target) {
-            return messageArray;
-        }
-        else if (select == "Everyone") {
-            if (direction) {
-                return messageArray.filter(chat => chat.type == "chat").filter(chat => chat.direction == "From");
+        if (messageArray) {
+            if (!target) {
+                return messageArray;
             }
-            else {
-                return messageArray.filter(chat => chat.type == "chat").filter(chat => (chat.direction == "To" || chat.direction == "Self"));
-            }
+            else if (select == "Everyone") {
+                if (direction) {
+                    return messageArray.filter(chat => chat.type == "chat").filter(chat => chat.direction == "From");
+                }
+                else {
+                    return messageArray.filter(chat => chat.type == "chat").filter(chat => (chat.direction == "To" || chat.direction == "Self"));
+                }
 
-        } else if (select == username) {
-            if (direction) {
-                return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "To"));
+            } else if (select == username) {
+                if (direction) {
+                    return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "To"));
+                }
+                else {
+                    return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "From"));
+                }
             }
             else {
-                return messageArray.filter(chat => chat.type == "whisper").filter(chat => (chat.direction == "From"));
+                if (direction) {
+                    return messageArray.filter(chat => chat.type == "whisper").filter(chat => chat.username == select).filter(chat => chat.direction == "From");
+                }
+                else {
+                    return messageArray.filter(chat => chat.type == "whisper").filter(chat => chat.username == select).filter(chat => chat.direction == "To");
+                }
+
             }
         }
         else {
-            if (direction) {
-                return messageArray.filter(chat => chat.type == "whisper").filter(chat => chat.username == select).filter(chat => chat.direction == "From");
-            }
-            else {
-                return messageArray.filter(chat => chat.type == "whisper").filter(chat => chat.username == select).filter(chat => chat.direction == "To");
-            }
-            
+            return [];
         }
     };
 };

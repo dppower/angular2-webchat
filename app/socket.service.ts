@@ -17,7 +17,7 @@ export class SocketService {
     };
 
     connect() {
-        this.socket_ = io.connect("/chatroom");
+        this.socket_ = io.connect("/chatroom", { reconnection: false });
         this.socket_.on("error", (err) => { console.log(err); });
 
         this.socket_.on("disconnect", () => { this.events_.emit("socket-disconnect"); });

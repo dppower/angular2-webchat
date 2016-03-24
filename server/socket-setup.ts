@@ -45,7 +45,7 @@ export class Chatroom {
             () => { socket.emit("list-completed"); }
         );
 
-        this.chatBuffer.subscribe(chat => console.log(JSON.stringify(chat)));
+        //this.chatBuffer.subscribe(chat => console.log(JSON.stringify(chat)));
 
         var existingUserIndex = this.userList.findIndex((x) => { return x.username == username; });
         if (existingUserIndex > -1) {

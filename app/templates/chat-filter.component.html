@@ -1,0 +1,20 @@
+<div class="row nav-bar">
+    <div class="col-xs-3">
+        <p>Logged in as: {{username}}</p>
+    </div>
+    <div class="col-xs-3">
+        <label>Filters:</label>
+        <button type="button" (click)="resetFilters()">Reset</button>
+    </div>
+    <div class="col-xs-3">
+        <label>Target:</label>
+        <button type="button" (click)="toggleTargetFilter()">{{targetFilter ? selectedTarget : 'All'}}</button>
+    </div>
+    <div class="col-xs-3" *ngIf="targetFilter">
+        <label>Direction:</label>
+        <button type="button" (click)="toggleDirectionFilter()">{{directionFilter ? 'From' : 'To'}}</button>
+    </div>
+</div>
+<div>
+    <chat-display [inSelectedTarget]="selectedTarget" [inTargetFilter]="targetFilter" [inDirectionFilter]="directionFilter"></chat-display>
+</div>

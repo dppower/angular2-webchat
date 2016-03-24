@@ -1,31 +1,11 @@
 <div class="wrap" (click)="refocusChatInput()">
     <div class="row">
         <div class="col-xs-9">
-            <div class="row">
-                <div class="col-xs-3">
-                    <p>Logged in as: {{username}}</p>
-                </div>
-                <div class="col-xs-3">
-                    <span>Filters:</span>
-                    <button type="button" (click)="resetFilters()">Reset</button>
-                </div>
-                <div class="col-xs-3">
-                    <span>Target:</span>
-                    <button type="button" (click)="toggleTargetFilter()">{{targetFilter ? selectedTarget : 'All'}}</button>
-                </div>
-                <div class="col-xs-3" *ngIf="targetFilter">
-                    <span>Direction:</span>
-                    <button type="button" (click)="toggleDirectionFilter()">{{directionFilter ? 'From' : 'To'}}</button>
-                </div>
-            </div>
+            <chat-filter></chat-filter>
         </div>
         <div class="col-xs-3">
-            <p>Select:</p>
+            <user-list></user-list>
         </div>
-    </div>
-    <div class="row">
-        <chat-display [inSelectedTarget]="selectedTarget" [inTargetFilter]="targetFilter" [inDirectionFilter]="directionFilter"></chat-display>
-        <user-list></user-list>
     </div>
 </div>
 <div class="footer">
