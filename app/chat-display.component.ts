@@ -1,12 +1,12 @@
-import {Component, ChangeDetectionStrategy, OnInit, Input} from "angular2/core";
-import {AsyncPipe, NgClass} from "angular2/common";
+import {Component, ChangeDetectionStrategy, OnInit, Input, ViewChild, ChangeDetectorRef, AfterViewChecked} from "angular2/core";
+import {AsyncPipe} from "angular2/common";
 import {Observable} from "rxjs/Rx";
-import {AutoScroll} from "./auto-scroll.directive";
+import {AutoScrollComponent} from "./auto-scroll.component";
+import {ChatMessageComponent} from "./chat-message.component";
 import {SocketService} from "./socket.service";
 import {Event$Service} from "./event$.service";
 import {AuthService} from "./auth.service";
 import {MessageFilterPipe} from "./message-filter.pipe";
-import * as _ from "lodash";
 
 type ChatMessage = { username: string, message: string, direction: string };
 type ChatType = { username: string, message: string, direction: string, type: string };
@@ -14,48 +14,42 @@ type ChatType = { username: string, message: string, direction: string, type: st
 @Component({
     selector: "chat-display",
     template: `
-         <div class="chat-box col-xs-9" autoScroll>
-            <p *ngFor="#msg of messages | async | messageFilter:username:inSelectedTarget:inTargetFilter:inDirectionFilter" [ngClass]="msg.type">{{msg.message}}</p>
-        </div>
-       `,
-    styles: [`.whisper {
-            color: rosybrown;
-        }`],
-    directives: [AutoScroll, NgClass],
-    pipes: [AsyncPipe, MessageFilterPipe],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    <auto-scroll-display>
+        <chat-message *ngFor="#chat of chats | async | messageFilter:username:inSelectedTarget:inTargetFilter:inDirectionFilter" [message]="chat.message" [type]="chat.type"></chat-message>
+    </auto-scroll-display>
+    `,
+    directives: [AutoScrollComponent, ChatMessageComponent],
+    pipes: [AsyncPipe, MessageFilterPipe]
 })
 export class ChatDisplay implements OnInit {
-
+    
     username: string;
+
     @Input() inSelectedTarget: string;
     @Input() inTargetFilter: boolean;
     @Input() inDirectionFilter: boolean;
 
-    messages: Observable<ChatType[]>;
+    chats: Observable<ChatType[]>;
 
-    constructor(private events_: Event$Service, private socketService_: SocketService, private authService_: AuthService) {
-        this.events_.create("auto-scroll");
-    };
-
-    ngOnInit() {
+    constructor(private socketService_: SocketService, private authService_: AuthService) {
         this.username = this.authService_.username;
-
+    };
+    
+    ngOnInit() {
         let whispers: Observable<ChatType> = this.socketService_.whisper$
             .map<ChatType>(chat => {
-                return { username: chat.username, message: "[" + chat.direction + ": " + chat.username + "]: " + chat.message, direction: chat.direction, type: "whisper" };
+                let message = "[" + chat.direction + ": " + chat.username + "]: " + chat.message;
+                return { username: chat.username, message, direction: chat.direction, type: "whisper" };
             });
 
-        let chats: Observable<ChatType> = this.socketService_.chat$
-            //.map<ChatType>(chat => _.assign<ChatMessage, {}, ChatType>(chat, { type: "chat" }))
+        let shouts: Observable<ChatType> = this.socketService_.chat$
             .map<ChatType>(chat => {
-                return { username: chat.username, message: chat.username + ": " + chat.message, direction: chat.direction, type: "chat" };
+                let message = chat.username + ": " + chat.message;
+                return { username: chat.username, message, direction: chat.direction, type: "chat" };
             });
 
-        this.messages = chats.merge(whispers)
+        this.chats = shouts.merge(whispers)
             .map<ChatType[]>((chat: ChatType) => Array(chat))
             .scan<ChatType[]>((i, j) => i.concat(j));
-        
-        this.messages.subscribe(message => this.events_.emit("auto-scroll"));
     };
 }

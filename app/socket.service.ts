@@ -1,6 +1,7 @@
 import {Injectable} from "angular2/core";
 import {Observable} from "rxjs/Rx";
 import {Event$Service} from "./event$.service";
+import * as io from "socket.io-client";
 
 type UserAction = { action: string; username: string; };
 type ChatMessage = { username: string; message: string; direction: string;};

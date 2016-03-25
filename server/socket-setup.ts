@@ -14,7 +14,7 @@ export class Chatroom {
     passport: any;
 
     userActionStream: Subject<UserAction> = new Subject();
-    chatBuffer: ReplaySubject<ChatSubject> = new ReplaySubject(20);
+    //chatBuffer: ReplaySubject<ChatSubject> = new ReplaySubject(20);
 
     userList: UserSocket[] = [];
      
@@ -74,7 +74,7 @@ export class Chatroom {
             let messageToTarget: ChatMessage = { username, message: chat.message, direction: "From"};
             let messageToSelf: ChatMessage = { username, message: chat.message, direction: "Self"};
             
-            this.chatBuffer.next({ sender: username, recipient: "Everyone", message: chat.message });
+            //this.chatBuffer.next({ sender: username, recipient: "Everyone", message: chat.message });
             socket.emit("chat", messageToSelf);
             socket.broadcast.emit("chat", messageToTarget);
         });
@@ -85,7 +85,7 @@ export class Chatroom {
             let selfDirection = (chat.target == username) ? "Self" : "To";
             let messageToSelf: ChatMessage = { username: chat.target, message: chat.message, direction: selfDirection};
 
-            this.chatBuffer.next({ sender: username, recipient: chat.target, message: chat.message });
+            //this.chatBuffer.next({ sender: username, recipient: chat.target, message: chat.message });
 
             var userSockets: string[] = this.userList.filter(user => user.username == username)
                 .map(user => user.socketids)

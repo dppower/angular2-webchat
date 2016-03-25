@@ -1,24 +1,21 @@
-import {Directive, ElementRef, OnDestroy} from "angular2/core";
-import {Event$Service} from "./event$.service";
-import {Subscription} from "rxjs/Rx";
+import {Directive, Input, HostBinding, OnChanges, SimpleChange} from "angular2/core";
 
 @Directive({
     selector: "[autoScroll]"
 })
-export class AutoScroll implements OnDestroy {
+export class AutoscrollDirective {
+    @Input() inScrollHeight;
+    @Input() inClientHeight;
 
-    subscription: Subscription<string>;
-
-    constructor(private elem: ElementRef, private events_: Event$Service) {
-        // The onNext callback should use 'setTimeout' to delay it until after the new message is added.
-        this.subscription = this.events_.subscribe("auto-scroll", (data) => { setTimeout(() => this.scroll(data)); });
-    }
+    @HostBinding("scrollTop") outScrollTop;
     
-    scroll(event: string) {
-        this.elem.nativeElement.scrollTop = this.elem.nativeElement.scrollHeight - this.elem.nativeElement.clientHeight;
-    }
+    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+        if (changes["inScrollHeight"] || changes["inClientHeight"]) {
+            this.scroll();
+        }
+    };
 
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-    }
+    scroll() {
+        this.outScrollTop = this.inScrollHeight - this.inClientHeight;
+    };
 }
