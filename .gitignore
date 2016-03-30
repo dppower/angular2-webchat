@@ -1,7 +1,5 @@
 build/
-public/js
 public/app
-normalize.css
 db/
 node_modules/
 typings/

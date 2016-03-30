@@ -6,7 +6,10 @@ npm install
 
 typings install
 
-Need mongodb installed and running ("npm run db" will connect to localhost:27017)
+Need mongodb installed and running (mkdir db and "npm run db" will connect to localhost:27017)
+
+mkdir public/app/templates
+mkdir public/app/styles
 
 npm start
 
