@@ -9,7 +9,7 @@
     "copy-styles": "copy .\\app\\styles\\*.css .\\public\\app -recurse",
     "tsc-s": "tsc -p ./server/",
     "tsc-c": "tsc -p ./app/",
-    "start": "npm run copy-templates && npm run copy-styles && npm run tsc-s && npm run tsc-c && node build/server.js"
+    "start": "md -Force .\\public\\app && npm run copy-templates && npm run copy-styles && npm run tsc-s && npm run tsc-c && node build/server.js"
   },
   "author": "David",
   "license": "ISC",

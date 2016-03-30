@@ -1,6 +1,6 @@
 build/
 public/js
-public/app/*
+public/app
 normalize.css
 db/
 node_modules/
