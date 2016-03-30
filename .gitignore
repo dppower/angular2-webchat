@@ -1,8 +1,8 @@
-public/
 build/
+public/js
+public/app
+normalize.css
 db/
-config/
 node_modules/
 typings/
-typings.json
 npm-debug.log
