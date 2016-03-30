@@ -4,7 +4,7 @@
   "description": "A simple chatroom build with angular2 and socket.io",
   "main": "build/server.js",
   "scripts": {
-    "db": "mongod -f .\\config\\mongod.config",
+    "db": "mkdir -f .\\db && mongod -f .\\config\\mongod.config",
     "copy-templates": "copy .\\app\\templates\\*.html .\\public\\app -recurse",
     "copy-styles": "copy .\\app\\styles\\*.css .\\public\\app -recurse",
     "tsc-s": "tsc -p ./server/",
