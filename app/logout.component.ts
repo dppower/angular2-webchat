@@ -6,10 +6,16 @@ import {SocketService} from "./socket.service";
 @Component({
     selector: "logout",
     template: `
-                <div class="col-xs-2">
-                    <button type="button" class="btn btn-primary btn-lg btn-block" (click)="logout()">Logout</button>
-                </div>
-        `
+    <button type="button" class="chat-button" (click)="logout()">Logout</button>
+    `,
+    styles: [`
+    .chat-button {
+        margin-left: 1em;
+        float: left;
+        width: calc(20% - 1em);
+        height: 3em;
+    }
+    `],
 })
 export class LogoutComponent {
 

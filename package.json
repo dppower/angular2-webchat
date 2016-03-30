@@ -14,13 +14,13 @@
   "author": "David",
   "license": "ISC",
   "dependencies": {
-    "angular2": "^2.0.0-beta.6",
+    "angular2": "^2.0.0-beta.12",
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
     "bootstrap": "^3.3.6",
     "cookie-parser": "^1.4.1",
     "es6-promise": "^3.0.2",
-    "es6-shim": "^0.33.3",
+    "es6-shim": "^0.35.0",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "mongodb": "^2.1.7",
@@ -30,10 +30,12 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.0.0",
     "reflect-metadata": "0.1.2",
-    "rxjs": "5.0.0-beta.0",
+    "rxjs": "^5.0.0-beta.2",
     "socket.io": "^1.4.5",
     "systemjs": "^0.19.19",
-    "typescript": "^1.7.5",
-    "zone.js": "^0.5.14"
+    "zone.js": "^0.6.8"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.9"
   }
 }

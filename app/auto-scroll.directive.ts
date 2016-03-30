@@ -3,7 +3,7 @@ import {Directive, Input, HostBinding, OnChanges, SimpleChange} from "angular2/c
 @Directive({
     selector: "[autoScroll]"
 })
-export class AutoscrollDirective {
+export class AutoScrollDirective {
     @Input() inScrollHeight;
     @Input() inClientHeight;
 

@@ -1,13 +1,21 @@
 import {Component} from "angular2/core";
-import {AutoscrollDirective} from "./auto-scroll.directive";
+import {AutoScrollDirective} from "./auto-scroll.directive";
 
 @Component({
     selector: "auto-scroll-display",
     template: `
-    <div #this class="chat-box" [inScrollHeight]="this.scrollHeight" [inClientHeight]="this.clientHeight" autoScroll>
+    <div #this class="message-box" [inScrollHeight]="this.scrollHeight" [inClientHeight]="this.clientHeight" autoScroll>
         <ng-content></ng-content>
     </div>
     `,
-    directives: [AutoscrollDirective]
+    styles: [`
+    .message-box {
+        height: calc(100% - 3em);
+        width: 80%;
+        overflow-y: scroll;
+        float: left;
+    }
+    `],
+    directives: [AutoScrollDirective]
 })
 export class AutoScrollComponent{ }

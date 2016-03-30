@@ -1,0 +1,27 @@
+<div id="chat-display">
+    <div id="filter-bar">
+        <div class="filter-item">
+            <p>{{username}}</p>
+        </div>
+        <div class="filter-item">
+            <label>Filters:</label>
+            <button type="button" (click)="resetFilters()">Reset</button>
+        </div>
+        <div class="filter-item">
+            <label>Target:</label>
+            <button type="button" (click)="toggleTargetFilter()">{{targetFilter ? selectedTarget : 'All'}}</button>
+        </div>
+        <div class="filter-item">
+            <div *ngIf="targetFilter">
+                <label>Direction:</label>
+                <button type="button" (click)="toggleDirectionFilter()">{{directionFilter ? 'From' : 'To'}}</button>
+            </div>
+        </div>
+        <div class="filter-item">
+            <p>Select:<p>
+        </div>
+    </div>
+    <message-display [inSelectedTarget]="selectedTarget" [inTargetFilter]="targetFilter" [inDirectionFilter]="directionFilter"></message-display>
+    <user-list></user-list>
+</div>
+

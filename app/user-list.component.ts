@@ -7,18 +7,25 @@ import {Event$Service} from "./event$.service";
 @Component({
     selector: "user-list",
     template: `
-            <p>Select:</p>
-            <p *ngFor="#user of userslist" (click)="selectChatTarget(user)" [ngClass]="{selected: isSelected(user)}">{{user}}</p>
-       `,
+    <div id="user-display">
+        <p *ngFor="#user of userslist" (click)="selectChatTarget(user)" [ngClass]="{selected: isSelected(user)}">{{user}}</p>
+    </div>
+    `,
     styles: [`
-        .selected {
-            background-color: #EEE;
-            color: #369;
-        }
+    #user-display {
+        height: calc(100% - 3em);
+        width: 20%;
+        float: left;
+        overflow-y: scroll;
+    }
+    .selected {
+        background-color: #EEE;
+        color: #369;
+    }
     `],
     directives: [NgClass]
 })
-export class UserList implements OnInit {
+export class UserListComponent implements OnInit {
     
     selectedUser: string = "Everyone";
     userslist: string[] = ["Everyone"];

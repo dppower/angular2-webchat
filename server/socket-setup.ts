@@ -13,7 +13,7 @@ export class Chatroom {
     session: express.RequestHandler;
     passport: any;
 
-    userActionStream: Subject<UserAction> = new Subject();
+    userActionStream: Subject<UserAction> = new Subject<UserAction>();
     //chatBuffer: ReplaySubject<ChatSubject> = new ReplaySubject(20);
 
     userList: UserSocket[] = [];
@@ -34,7 +34,7 @@ export class Chatroom {
 
         var socketid: string = socket.id;
         var username: string = socket.request.username;
-        
+
         let userList$ = Observable.fromArray<UserAction>(this.userList.map(user => {
             return { action: "add", username: user.username };
         }));

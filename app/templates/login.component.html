@@ -1,20 +1,18 @@
-<div class="col-sm-6 col-sm-offset-3">
-    <h1>{{isLogin ? loginText.title : registerText.title }}</h1>
-    <form (ngSubmit)="onSubmit()">
+<div class="login-form">
+    <h1 class="form-header">{{isLogin ? loginText.title : registerText.title }}</h1>
+    <form (ngSubmit)="onSubmit()" *ngIf="isFormActive">
         <div class="form-group">
             <label>Username</label>
-            <input type="text" class="form-control" [(ngModel)]="username" placeholder="username">
+            <input type="text" class="form-control" [(ngModel)]="username" repeatFocus focusOnce="true">
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" class="form-control" [(ngModel)]="password" placeholder="password">
+            <input type="password" class="form-control" [(ngModel)]="password">
         </div>
         <div>
-            <button type="submit" class="btn btn-default btn-lg">{{isLogin ? loginText.title : registerText.title }}</button>
-            <animated-message *ngIf="responseMessage" [message]="responseMessage"></animated-message>
+            <button type="submit" class="submit-button">{{isLogin ? loginText.title : registerText.title }}</button>
+            <response-message *ngIf="responseMessage" [message]="responseMessage"></response-message>
         </div>
-        
+        <p id="login-toggle">{{isLogin ? loginText.text : registerText.text }} <span class="fake-link" (click)="toggleLogin()">{{isLogin ? registerText.title : loginText.title }}</span></p>
     </form>
-    <p></p>
-    <p>{{isLogin ? loginText.text : registerText.text }} <span class="fake-link" (click)="toggleLogin()">{{isLogin ? registerText.title : loginText.title }}</span></p>
 </div>

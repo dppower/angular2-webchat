@@ -1,55 +1,66 @@
-import {Component, ChangeDetectionStrategy, OnInit, Input, ViewChild, ChangeDetectorRef, AfterViewChecked} from "angular2/core";
-import {AsyncPipe} from "angular2/common";
-import {Observable} from "rxjs/Rx";
-import {AutoScrollComponent} from "./auto-scroll.component";
-import {ChatMessageComponent} from "./chat-message.component";
-import {SocketService} from "./socket.service";
-import {Event$Service} from "./event$.service";
+import {Component, OnInit} from "angular2/core";
+import {MessageDisplayComponent} from './message-display.component';
 import {AuthService} from "./auth.service";
-import {MessageFilterPipe} from "./message-filter.pipe";
-
-type ChatMessage = { username: string, message: string, direction: string };
-type ChatType = { username: string, message: string, direction: string, type: string };
+import {Event$Service} from "./event$.service";
+import {UserListComponent} from "./user-list.component";
 
 @Component({
     selector: "chat-display",
-    template: `
-    <auto-scroll-display>
-        <chat-message *ngFor="#chat of chats | async | messageFilter:username:inSelectedTarget:inTargetFilter:inDirectionFilter" [message]="chat.message" [type]="chat.type"></chat-message>
-    </auto-scroll-display>
-    `,
-    directives: [AutoScrollComponent, ChatMessageComponent],
-    pipes: [AsyncPipe, MessageFilterPipe]
+    templateUrl: "app/templates/chat-display.html",
+    styles: [`
+    #chat-display {
+        height: calc(100% - 10.8em);
+        background-color: #fff;
+        width: 80%;
+        margin-left: 10%;
+        z-index: 1;
+        position: relative;
+    }
+    #filter-bar {
+        height: 3em;
+        width: 100%;
+        background-color: gray;
+        color: whitesmoke;
+        display: block;  
+    }
+    .filter-item {
+        border-left: 1px solid white;
+        padding: 0 0.5em;
+        height: 3em;
+        width: 20%;
+        float: left;
+        clear: none;
+    }
+    `],
+    directives: [MessageDisplayComponent, UserListComponent]
 })
-export class ChatDisplay implements OnInit {
-    
+export class ChatDisplayComponent implements OnInit {
     username: string;
 
-    @Input() inSelectedTarget: string;
-    @Input() inTargetFilter: boolean;
-    @Input() inDirectionFilter: boolean;
+    selectedTarget: string = "Everyone";
 
-    chats: Observable<ChatType[]>;
+    targetFilter: boolean = false;
 
-    constructor(private socketService_: SocketService, private authService_: AuthService) {
-        this.username = this.authService_.username;
+    directionFilter: boolean = false;
+
+    toggleTargetFilter() {
+        this.targetFilter = !this.targetFilter;
     };
-    
+
+    toggleDirectionFilter() {
+        this.directionFilter = !this.directionFilter;
+    };
+
+    resetFilters() {
+        this.targetFilter = false;
+        this.directionFilter = false;
+    };
+
+    constructor(private events_: Event$Service, private authService_: AuthService) {
+        this.events_.subscribe("select-chat-target", (value) => this.selectedTarget = value);
+    }
+
     ngOnInit() {
-        let whispers: Observable<ChatType> = this.socketService_.whisper$
-            .map<ChatType>(chat => {
-                let message = "[" + chat.direction + ": " + chat.username + "]: " + chat.message;
-                return { username: chat.username, message, direction: chat.direction, type: "whisper" };
-            });
-
-        let shouts: Observable<ChatType> = this.socketService_.chat$
-            .map<ChatType>(chat => {
-                let message = chat.username + ": " + chat.message;
-                return { username: chat.username, message, direction: chat.direction, type: "chat" };
-            });
-
-        this.chats = shouts.merge(whispers)
-            .map<ChatType[]>((chat: ChatType) => Array(chat))
-            .scan<ChatType[]>((i, j) => i.concat(j));
-    };
+        this.username = this.authService_.username;
+    }
 }

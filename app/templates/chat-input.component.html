@@ -1,14 +1,10 @@
-<div id="input-row" class="row">
-    <form id="input-form" *ngIf="active" (ngSubmit)="sendMessage()" #thisForm="ngForm" autocomplete="off" novalidate>
-        <div id="input-box" class="col-xs-8">
-            <div id="input-box-error" *ngIf="errorMessage">
-                <p>{{errorMessage}}</p>
-            </div>
-            <input type="text" id="message-box" class="form-control input-lg" [(ngModel)]="message" required ngControl="chatMessage" placeholder="Enter a new message..." repeatFocus>
+<div id="input-form" >
+    <form *ngIf="active" (ngSubmit)="sendMessage()" #thisForm="ngForm" autocomplete="off" novalidate>
+        <div id="input-box-error" *ngIf="errorMessage">
+            <p>{{errorMessage}}</p>
         </div>
-        <div class="col-xs-2">
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Send</button>
-        </div>
+        <input type="text" id="chat-input" [(ngModel)]="message" required ngControl="chatMessage" placeholder="Enter a new message..." repeatFocus />
+        <button type="submit" class="chat-button">Send</button>
         <logout></logout>
     </form>
 </div>

@@ -1,26 +1,31 @@
-import {Directive, ElementRef, OnDestroy, OnInit} from "angular2/core";
-import {Event$Service} from "./event$.service";
+import {Directive, ElementRef, OnInit, Input, HostListener} from "angular2/core";
 
 @Directive({
     selector: "[repeatFocus]",
 })
-export class RepeatFocus implements OnDestroy, OnInit {
+export class RepeatFocus {
 
-    subscription: any;
+    @Input() focusOnce: string = "false";
 
-    constructor(private elem: ElementRef, private events_: Event$Service) {
-        this.subscription = this.events_.subscribe("refocus", (data) => this.focus(data));
-    }
+    wasFocusedOnce: boolean = false;
+
+    @Input() shouldFocus: string = "true";
     
-    ngOnInit() {
-        this.focus("initial-focus");
-    }
+    @HostListener("blur", ["$event.target"]) refocus = (element) => {
+        if (this.focusOnce === "true" && this.wasFocusedOnce !== true) {
+            setTimeout(() => element.focus(), 0);
+            this.wasFocusedOnce = true;
+        }
+        else if (this.shouldFocus === "true" && this.focusOnce !== "true") {
+            setTimeout(() => element.focus(), 0);
+        }
+        return false;
+    };
 
-    focus(event) {
-        this.elem.nativeElement.focus();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
+    constructor(private elem: ElementRef) { }
+    
+    ngAfterViewInit() {
+        let initialBlur = new FocusEvent("blur", { bubbles: false });
+        setTimeout(() => this.elem.nativeElement.dispatchEvent(initialBlur), 0);
     }
 }

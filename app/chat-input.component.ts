@@ -9,6 +9,28 @@ import {AuthService} from "./auth.service";
     selector: "chat-input",
     templateUrl: "app/templates/chat-input.component.html",
     styleUrls: ["app/styles/input-box-error.css"],
+    styles: [`
+    #input-form {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        margin-left: 10%;
+        width: 80%;
+        display: block;
+        height: 3em;
+        clear: both;
+    }
+    #chat-input {
+        width: 60%;
+        float: left;
+        height: 3em;
+    }
+    .chat-button {
+        margin-left: 1em;
+        float: left;
+        width: calc(20% - 1em);
+        height: 3em;
+    }
+    `],
     directives: [RepeatFocus, LogoutComponent]
 })
 export class ChatInput implements OnInit {
