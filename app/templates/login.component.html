@@ -9,10 +9,8 @@
             <label>Password</label>
             <input type="password" class="form-control" [(ngModel)]="password">
         </div>
-        <div>
-            <button type="submit" class="submit-button">{{isLogin ? loginText.title : registerText.title }}</button>
-            <response-message *ngIf="responseMessage" [message]="responseMessage"></response-message>
-        </div>
+        <button type="submit" class="submit-button">{{isLogin ? loginText.title : registerText.title }}</button>
+        <response-message *ngIf="responseMessage" [message]="responseMessage"></response-message>
         <p id="login-toggle">{{isLogin ? loginText.text : registerText.text }} <span class="fake-link" (click)="toggleLogin()">{{isLogin ? registerText.title : loginText.title }}</span></p>
     </form>
 </div>

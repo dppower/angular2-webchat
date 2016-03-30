@@ -16,6 +16,7 @@ import {AuthService} from "./auth.service";
         margin-left: 10%;
         width: 80%;
         display: block;
+        position: relative;
         height: 3em;
         clear: both;
     }
